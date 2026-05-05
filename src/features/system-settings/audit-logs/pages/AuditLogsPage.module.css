@@ -1,0 +1,25 @@
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 16px;
+}
+
+.detail {
+  display: grid;
+  gap: 12px;
+}
+
+.json {
+  padding: 12px;
+  overflow: auto;
+  color: #8ab4ff;
+  background: #07111f;
+  border: 1px solid #1f3550;
+  border-radius: 8px;
+}
+
+@media (max-width: 1180px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,40 @@
+.moduleGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.moduleCard {
+  min-height: 150px;
+  padding: 18px;
+  border: 1px solid rgba(58, 103, 151, 0.36);
+  border-radius: 14px;
+  background: rgba(13, 28, 44, 0.9);
+}
+
+.moduleTitle {
+  margin-bottom: 8px;
+  color: #e6edf7;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.moduleDesc {
+  min-height: 44px;
+  color: #8a99ad;
+  line-height: 1.6;
+}
+
+.moduleMeta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 18px;
+  color: #5f6f85;
+}
+
+@media (max-width: 1280px) {
+  .moduleGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

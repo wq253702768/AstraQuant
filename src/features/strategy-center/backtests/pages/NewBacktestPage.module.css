@@ -1,0 +1,56 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 16px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.section {
+  padding: 14px;
+  border: 1px solid var(--aq-border);
+  border-radius: 12px;
+  background: rgba(7, 17, 31, 0.32);
+}
+
+.section h3 {
+  margin: 0 0 12px;
+  color: var(--aq-text);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.summary {
+  position: sticky;
+  top: 76px;
+}
+
+.summaryList {
+  display: grid;
+  gap: 12px;
+  color: var(--aq-text-secondary);
+}
+
+.summaryList strong {
+  float: right;
+  color: var(--aq-text);
+}
+
+.warning {
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px solid rgba(245, 165, 36, 0.35);
+  border-radius: 10px;
+  color: var(--aq-warning);
+  background: rgba(245, 165, 36, 0.08);
+}
+

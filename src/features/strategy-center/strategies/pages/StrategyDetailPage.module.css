@@ -1,0 +1,51 @@
+.charts {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.list {
+  display: grid;
+  gap: 12px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(31, 53, 80, 0.55);
+}
+
+.muted {
+  color: var(--aq-text-secondary);
+  font-size: 12px;
+}
+
+.positive {
+  color: var(--aq-success);
+}
+
+.warning {
+  color: var(--aq-warning);
+}
+
+.audit {
+  color: var(--aq-text-secondary);
+  line-height: 1.9;
+}
+
+@media (max-width: 1200px) {
+  .charts,
+  .columns {
+    grid-template-columns: 1fr;
+  }
+}

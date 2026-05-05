@@ -1,0 +1,15 @@
+:root {
+  --aq-bg: #07111f;
+  --aq-sidebar: #06101d;
+  --aq-card: #0d1b2a;
+  --aq-card-2: #101f31;
+  --aq-border: #1f3550;
+  --aq-primary: #1677ff;
+  --aq-success: #16c784;
+  --aq-danger: #ff4d4f;
+  --aq-warning: #f5a524;
+  --aq-ai: #7c5cff;
+  --aq-text: #e6edf7;
+  --aq-text-secondary: #8a99ad;
+  --aq-text-muted: #5f6f85;
+}

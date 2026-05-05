@@ -1,0 +1,97 @@
+.loginPage {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(420px, 1fr) 460px;
+  background:
+    radial-gradient(circle at 18% 16%, rgba(22, 119, 255, 0.22), transparent 28%),
+    radial-gradient(circle at 70% 80%, rgba(124, 92, 255, 0.16), transparent 28%),
+    #07111f;
+  color: #e6edf7;
+}
+
+.brandPanel {
+  padding: 72px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.logo {
+  color: #69a7ff;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 40px;
+}
+
+.brandPanel h1 {
+  margin: 0;
+  font-size: 48px;
+}
+
+.brandPanel p {
+  max-width: 560px;
+  color: #9aa9bd;
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.tags span {
+  border: 1px solid #24476f;
+  border-radius: 999px;
+  padding: 8px 14px;
+  color: #b9c7d9;
+  background: rgba(16, 31, 49, 0.7);
+}
+
+.cardWrap {
+  display: flex;
+  align-items: center;
+  padding-right: 72px;
+}
+
+.loginCard {
+  width: 100%;
+  background: rgba(13, 27, 42, 0.86);
+  border: 1px solid #1f3550;
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
+}
+
+.loginCard h2 {
+  margin: 0 0 8px;
+  font-size: 28px;
+}
+
+.loginCard p {
+  margin-bottom: 28px;
+  color: #8a99ad;
+}
+
+.hint {
+  margin-top: 24px;
+  color: #6f8094;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+@media (max-width: 900px) {
+  .loginPage {
+    grid-template-columns: 1fr;
+  }
+
+  .brandPanel {
+    padding: 40px 28px 0;
+  }
+
+  .cardWrap {
+    padding: 28px;
+  }
+}

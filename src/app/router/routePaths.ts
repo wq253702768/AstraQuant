@@ -1,0 +1,66 @@
+export const routePaths = {
+  login: '/auth/login',
+  dashboard: '/dashboard',
+  strategyList: '/strategy-center/strategies',
+  strategyDetail: '/strategy-center/strategies/:strategyId',
+  strategyConfig: '/strategy-center/strategies/:strategyId/config',
+  strategyVersions: '/strategy-center/strategies/:strategyId/versions',
+  newBacktest: '/strategy-center/backtests/new',
+  dataValidation: '/strategy-center/backtests/demo-task/validation',
+  backtestExecution: '/strategy-center/backtests/demo-task/execution',
+  backtestResult: '/strategy-center/backtests/demo-task/result',
+  trades: '/strategy-center/backtests/demo-task/trades',
+  costs: '/strategy-center/backtests/demo-task/costs',
+  drawdowns: '/strategy-center/backtests/demo-task/drawdowns',
+  replay: '/strategy-center/backtests/demo-task/replay',
+  aiReview: '/strategy-center/backtests/demo-task/ai-review',
+  optimization: '/strategy-center/backtests/demo-task/optimization',
+  scoring: '/strategy-center/backtests/demo-task/score',
+  report: '/strategy-center/backtests/demo-task/report',
+  paperValidation: '/strategy-center/paper-validation',
+  settings: '/system-settings',
+  exchangeSettings: '/system-settings/exchange',
+  aiModelSettings: '/system-settings/ai-models',
+  riskSettings: '/system-settings/risk',
+  auditLogs: '/system-settings/audit-logs',
+  users: '/system-settings/users',
+  roles: '/system-settings/roles',
+  notifications: '/system-settings/notifications',
+  strategyCenter: {
+    strategies: '/strategy-center/strategies',
+    strategyDetail: '/strategy-center/strategies/:strategyId',
+    strategyConfig: '/strategy-center/strategies/:strategyId/config',
+    strategyVersions: '/strategy-center/strategies/:strategyId/versions',
+    newBacktest: '/strategy-center/backtests/new',
+    validation: '/strategy-center/backtests/:taskId/validation',
+    execution: '/strategy-center/backtests/:taskId/execution',
+    result: '/strategy-center/backtests/:taskId/result',
+    trades: '/strategy-center/backtests/:taskId/trades',
+    costs: '/strategy-center/backtests/:taskId/costs',
+    drawdowns: '/strategy-center/backtests/:taskId/drawdowns',
+    replay: '/strategy-center/backtests/:taskId/replay',
+    aiReview: '/strategy-center/backtests/:taskId/ai-review',
+    optimization: '/strategy-center/backtests/:taskId/optimization',
+    score: '/strategy-center/backtests/:taskId/score',
+    report: '/strategy-center/backtests/:taskId/report',
+    paperValidation: '/strategy-center/paper-validation',
+  },
+  systemSettings: {
+    overview: '/system-settings',
+    exchange: '/system-settings/exchange',
+    aiModels: '/system-settings/ai-models',
+    risk: '/system-settings/risk',
+    auditLogs: '/system-settings/audit-logs',
+    users: '/system-settings/users',
+    roles: '/system-settings/roles',
+    notifications: '/system-settings/notifications',
+  },
+} as const;
+
+export const ROUTE_PATHS = routePaths;
+
+export const buildStrategyDetailPath = (strategyId: string) =>
+  `/strategy-center/strategies/${strategyId}`;
+
+export const buildStrategyConfigPath = (strategyId: string) =>
+  `/strategy-center/strategies/${strategyId}/config`;

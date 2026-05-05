@@ -1,0 +1,29 @@
+.card {
+  height: 100%;
+  border: 1px solid rgba(65, 99, 145, 0.5);
+  background:
+    linear-gradient(180deg, rgba(15, 31, 49, 0.96), rgba(10, 22, 36, 0.96)),
+    var(--aq-card);
+  border-radius: 12px;
+  box-shadow: var(--aq-shadow);
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.title {
+  color: var(--aq-text);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.description {
+  margin-top: 4px;
+  color: var(--aq-text-muted);
+  font-size: 12px;
+}

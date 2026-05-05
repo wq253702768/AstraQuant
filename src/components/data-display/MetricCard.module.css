@@ -1,0 +1,74 @@
+.card {
+  height: 100%;
+  background:
+    linear-gradient(145deg, rgba(22, 119, 255, 0.08), transparent 58%),
+    var(--aq-card);
+  border: 1px solid var(--aq-border);
+  border-radius: 12px;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 92px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--aq-text-secondary);
+  font-size: 13px;
+}
+
+.icon {
+  color: var(--aq-primary);
+}
+
+.value {
+  color: var(--aq-text);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.positive {
+  color: var(--aq-success);
+}
+
+.negative {
+  color: var(--aq-danger);
+}
+
+.warning {
+  color: var(--aq-warning);
+}
+
+.subValue {
+  color: var(--aq-text-secondary);
+  font-size: 12px;
+}
+
+.success {
+  border-color: rgba(22, 199, 132, 0.35);
+}
+
+.danger {
+  border-color: rgba(255, 77, 79, 0.35);
+}
+
+.primary {
+  border-color: rgba(22, 119, 255, 0.35);
+}
+
+.purple,
+.ai {
+  border-color: rgba(124, 92, 255, 0.35);
+}
+
+.trend,
+.description {
+  color: var(--aq-text-secondary);
+  font-size: 12px;
+}
