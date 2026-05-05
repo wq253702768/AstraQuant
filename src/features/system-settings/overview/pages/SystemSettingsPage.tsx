@@ -75,6 +75,9 @@ export function SystemSettingsPage() {
               <strong className="text-warning">2 条</strong>
             </p>
           </div>
+          <div className={styles.safetyNote}>
+            AI 不可下单，AI 不可修改策略，AI 不进入交易热路径。实盘交易权限默认关闭，关键配置变更必须进入审计日志。
+          </div>
         </SectionCard>
       </div>
     </PageContainer>

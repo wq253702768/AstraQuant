@@ -72,8 +72,18 @@ export function StrategyListPage() {
         extra={
           <Space wrap>
             <Input.Search placeholder="搜索策略名 / 标签 / 合约" style={{ width: 240 }} />
-            <Select placeholder="策略类型" style={{ width: 140 }} options={[{ value: 'trend', label: '趋势突破' }]} />
-            <Select placeholder="状态" style={{ width: 140 }} options={[{ value: 'paper_allowed', label: '允许模拟盘' }]} />
+            <Select
+              data-testid="strategy-type-filter"
+              placeholder="策略类型"
+              style={{ width: 140 }}
+              options={[{ value: 'trend', label: '趋势突破' }]}
+            />
+            <Select
+              data-testid="strategy-status-filter"
+              placeholder="状态"
+              style={{ width: 140 }}
+              options={[{ value: 'paper_allowed', label: '允许模拟盘' }]}
+            />
             <Select placeholder="风险等级" style={{ width: 140 }} options={[{ value: 'medium', label: '中风险' }]} />
           </Space>
         }
@@ -99,7 +109,7 @@ export function StrategyListPage() {
                   >
                     配置
                   </Button>
-                  <Button type="link" onClick={() => navigate(routePaths.strategyCenter.newBacktest)}>
+                  <Button type="link" onClick={() => navigate(routePaths.newBacktest)}>
                     回测
                   </Button>
                 </Space>

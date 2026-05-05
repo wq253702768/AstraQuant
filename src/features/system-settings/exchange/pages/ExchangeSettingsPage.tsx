@@ -11,7 +11,7 @@ const permissionRows = [
   { key: 'history', name: '历史K线', status: '通过' },
   { key: 'funding', name: '资金费率', status: '通过' },
   { key: 'paper', name: '模拟盘交易', status: '通过' },
-  { key: 'live', name: '实盘交易', status: '未启用' },
+  { key: 'live', name: '实盘交易', status: '关闭' },
   { key: 'withdraw', name: '提币权限', status: '禁止' },
 ];
 
@@ -73,6 +73,7 @@ export function ExchangeSettingsPage() {
               },
             ]}
           />
+          <div className="notice">实盘交易关闭 · 提币权限禁止</div>
           <div className="notice">
             <CheckCircleOutlined /> 第一阶段建议仅启用只读和模拟盘权限，不配置提币权限。
           </div>

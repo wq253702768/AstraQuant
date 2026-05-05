@@ -53,7 +53,7 @@ export function LoginPage() {
             <Checkbox>记住登录</Checkbox>
             <a>忘记密码</a>
           </div>
-          <Button type="primary" htmlType="submit" size="large" block>
+          <Button data-testid="login-submit" type="primary" htmlType="submit" size="large" block>
             登录
           </Button>
           <Button size="large" block>

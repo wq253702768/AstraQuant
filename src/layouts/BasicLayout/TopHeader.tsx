@@ -18,7 +18,7 @@ export function TopHeader() {
         <Typography.Text className={styles.breadcrumb}>AstraQuant 星枢量化</Typography.Text>
       </Space>
       <Space size={16}>
-        <Input prefix={<SearchOutlined />} placeholder="搜索策略、品种、指标..." className={styles.search} />
+        <Input prefix={<SearchOutlined />} placeholder="搜索策略、合约、指标..." className={styles.search} />
         <Select
           value="default"
           className={styles.workspace}

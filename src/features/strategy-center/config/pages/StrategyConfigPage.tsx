@@ -30,7 +30,7 @@ export function StrategyConfigPage() {
               <Row gutter={16}>
                 <Col span={8}>
                   <Form.Item label="策略名称">
-                    <Input defaultValue="BTC 趋势突破策略" />
+                    <Input data-testid="strategy-name-input" defaultValue="BTC 趋势突破策略" />
                   </Form.Item>
                 </Col>
                 <Col span={8}>
@@ -40,12 +40,20 @@ export function StrategyConfigPage() {
                 </Col>
                 <Col span={8}>
                   <Form.Item label="策略类型">
-                    <Select defaultValue="趋势突破" options={[{ value: '趋势突破' }, { value: '均值回归' }]} />
+                    <Select
+                      data-testid="strategy-type-select"
+                      defaultValue="趋势突破"
+                      options={[{ value: '趋势突破' }, { value: '均值回归' }]}
+                    />
                   </Form.Item>
                 </Col>
                 <Col span={8}>
                   <Form.Item label="交易方向">
-                    <Select defaultValue="双向" options={[{ value: '双向' }, { value: '做多' }, { value: '做空' }]} />
+                    <Select
+                      data-testid="trade-direction-select"
+                      defaultValue="双向"
+                      options={[{ value: '双向' }, { value: '做多' }, { value: '做空' }]}
+                    />
                   </Form.Item>
                 </Col>
                 <Col span={16}>
@@ -71,7 +79,11 @@ export function StrategyConfigPage() {
                 </Col>
                 <Col span={8}>
                   <Form.Item label="合约">
-                    <Select defaultValue="BTC-USDT-SWAP" options={[{ value: 'BTC-USDT-SWAP' }, { value: 'ETH-USDT-SWAP' }]} />
+                    <Select
+                      data-testid="instrument-select"
+                      defaultValue="BTC-USDT-SWAP"
+                      options={[{ value: 'BTC-USDT-SWAP' }, { value: 'ETH-USDT-SWAP' }]}
+                    />
                   </Form.Item>
                 </Col>
                 <Col span={8}>
@@ -110,7 +122,12 @@ export function StrategyConfigPage() {
                 <Col span={8} key={label}>
                   <Form layout="vertical">
                     <Form.Item label={label}>
-                      <InputNumber defaultValue={Number(value)} addonAfter={unit} style={{ width: '100%' }} />
+                      <InputNumber
+                        data-testid={label === '突破确认' ? 'breakout-confirm-input' : undefined}
+                        defaultValue={Number(value)}
+                        addonAfter={unit}
+                        style={{ width: '100%' }}
+                      />
                     </Form.Item>
                   </Form>
                 </Col>

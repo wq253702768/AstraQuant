@@ -3,7 +3,7 @@ import { AnalysisPlaceholderPage } from '../../shared/AnalysisPlaceholderPage';
 export function OptimizationPage() {
   return (
     <AnalysisPlaceholderPage
-      title="参数优化与版本对比"
+      title="参数优化"
       description="承接 AI 优化建议，人工确认后生成新策略版本并重新回测。"
       activeTab="参数优化"
       metrics={[

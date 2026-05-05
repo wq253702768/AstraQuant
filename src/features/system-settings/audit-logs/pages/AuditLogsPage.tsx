@@ -1,4 +1,4 @@
-import { Table, Tag } from 'antd';
+import { Button, Input, Table, Tag } from 'antd';
 
 import { PageContainer } from '@/layouts/PageContainer/PageContainer';
 import { SectionCard } from '@/components/data-display/SectionCard';
@@ -42,6 +42,7 @@ export function AuditLogsPage() {
     <PageContainer
       title="审计日志"
       description="追踪用户操作、策略变更、AI调用、回测执行与系统设置变更。"
+      extra={<Button>导出日志</Button>}
     >
       <div className="metric-grid five">
         <MetricCard title="今日操作数" value="286" />
@@ -52,6 +53,7 @@ export function AuditLogsPage() {
       </div>
 
       <SectionCard title="日志列表">
+        <Input.Search placeholder="搜索审计ID / 关键词" style={{ marginBottom: 16, maxWidth: 320 }} />
         <Table
           rowKey="auditId"
           dataSource={logs}

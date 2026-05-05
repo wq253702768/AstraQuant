@@ -18,7 +18,7 @@ export function NewBacktestPage() {
     >
       <Row gutter={[16, 16]}>
         <Col span={16}>
-          <SectionCard title="回测配置">
+          <SectionCard title="策略与版本">
             <Form layout="vertical">
               <Row gutter={16}>
                 <Col span={12}>
@@ -69,9 +69,16 @@ export function NewBacktestPage() {
               </Row>
             </Form>
           </SectionCard>
+          <SectionCard title="回测市场">
+            <Row gutter={16}>
+              <Col span={8}>交易所：OKX</Col>
+              <Col span={8}>合约：ETH-USDT-SWAP</Col>
+              <Col span={8}>周期：1H</Col>
+            </Row>
+          </SectionCard>
         </Col>
         <Col span={8}>
-          <SectionCard title="成本与执行设置">
+          <SectionCard title="成本模型">
             <Form layout="vertical">
               <Form.Item label="Maker 费率">
                 <InputNumber addonAfter="%" defaultValue={0.02} style={{ width: '100%' }} />
@@ -89,6 +96,12 @@ export function NewBacktestPage() {
                 <Switch defaultChecked />
               </Form.Item>
             </Form>
+          </SectionCard>
+          <SectionCard title="数据校验设置">
+            回测前执行数据校验；校验失败禁止正式回测。
+          </SectionCard>
+          <SectionCard title="配置摘要">
+            回测通过不等于可直接实盘，建议先进入模拟盘验证。
           </SectionCard>
         </Col>
       </Row>
