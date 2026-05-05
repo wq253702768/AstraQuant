@@ -1,0 +1,31 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(22, 119, 255, 0.16), transparent 28rem),
+    linear-gradient(135deg, #050b14 0%, #07111f 45%, #0a1422 100%);
+  color: #e6edf7;
+  font-family:
+    Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.ant-layout,
+.ant-menu,
+.ant-table,
+.ant-card {
+  color: #e6edf7;
+}

@@ -1,0 +1,61 @@
+.ticker {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.4fr 0.8fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.bottomGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.tickerItem {
+  border: 1px solid var(--aq-border);
+  border-radius: 10px;
+  padding: 12px;
+  background: var(--aq-card);
+}
+
+.tickerSymbol {
+  color: var(--aq-text-secondary);
+  font-size: 12px;
+}
+
+.tickerPrice {
+  margin-top: 8px;
+  color: var(--aq-text);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.positive {
+  color: var(--aq-profit);
+}
+
+.negative {
+  color: var(--aq-loss);
+}
+
+@media (max-width: 1200px) {
+  .ticker,
+  .cards,
+  .bottomGrid,
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

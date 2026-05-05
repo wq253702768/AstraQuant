@@ -1,0 +1,10 @@
+.strategyName {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.actionGroup {
+  display: flex;
+  gap: 8px;
+}

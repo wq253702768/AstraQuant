@@ -1,0 +1,36 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 16px;
+}
+
+.version {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.drawer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.vs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--text-secondary);
+}
+
+.diffRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.diffRow strong {
+  color: var(--text-primary);
+}
