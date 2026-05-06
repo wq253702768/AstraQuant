@@ -1,0 +1,22 @@
+from decimal import Decimal
+import os
+class Settings:
+    service_name = os.getenv("SERVICE_NAME", "paper-trading-service")
+    env = os.getenv("ENV", "dev")
+    http_port = int(os.getenv("HTTP_PORT", "8014"))
+    database_url = os.getenv("DATABASE_URL", "postgresql+asyncpg://astra:astra_password@localhost:5432/astraquant")
+    redis_url = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+    nats_url = os.getenv("NATS_URL", "nats://localhost:4222")
+    realtime_state_service_url = os.getenv("REALTIME_STATE_SERVICE_URL", "http://localhost:8012")
+    risk_engine_url = os.getenv("RISK_ENGINE_URL", "http://localhost:8013")
+    signal_engine_url = os.getenv("SIGNAL_ENGINE_URL", "http://localhost:8009")
+    strategy_service_url = os.getenv("STRATEGY_SERVICE_URL", "http://localhost:8002")
+    default_exchange = os.getenv("DEFAULT_EXCHANGE", "OKX")
+    default_currency = os.getenv("DEFAULT_CURRENCY", "USDT")
+    default_initial_balance = Decimal(os.getenv("DEFAULT_INITIAL_BALANCE", "10000"))
+    maker_fee_rate = Decimal(os.getenv("DEFAULT_MAKER_FEE_RATE", "0.0002"))
+    taker_fee_rate = Decimal(os.getenv("DEFAULT_TAKER_FEE_RATE", "0.0005"))
+    slippage_pct = Decimal(os.getenv("DEFAULT_SLIPPAGE_PCT", "0.0003"))
+    limit_order_expire_seconds = int(os.getenv("LIMIT_ORDER_EXPIRE_SECONDS", "10"))
+    log_level = os.getenv("LOG_LEVEL", "INFO")
+settings = Settings()

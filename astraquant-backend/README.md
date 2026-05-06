@@ -179,6 +179,16 @@ Sprint 12 新增实时风控服务接口：
 - `GET /api/risk/rules`
 - `POST /api/risk/check`
 
+Sprint 13 新增模拟盘交易接口：
+
+- `POST /api/paper-trading/accounts`
+- `GET /api/paper-trading/accounts/{id}`
+- `GET /api/paper-trading/accounts/{id}/positions`
+- `GET /api/paper-trading/accounts/{id}/ledger`
+- `GET /api/paper-trading/orders`
+- `GET /api/paper-trading/trades`
+- `GET /api/paper-trading/performance/strategies/{id}`
+
 Sprint 2 新增策略服务接口：
 
 - `GET /api/strategy-templates`
