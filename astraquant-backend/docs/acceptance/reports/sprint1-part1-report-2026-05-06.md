@@ -112,6 +112,7 @@ scripts/acceptance/sprint1_part1_remote_auth.sh
 - 修复 API Gateway live monitor 配置字段兼容问题。
 - 前端 Nginx 改为 80 端口统一入口，并代理 `/api/*` 与 `/health` 到 API Gateway。
 - 修复前端构建参数默认指向 `:8000` 导致浏览器登录失败的问题；当前统一通过 `http://47.239.90.234` 访问前端和 API。
+- 修复登录页、侧边栏、主内容区、卡片标题的 CSS Module 类名不匹配问题，恢复真实平台页面排版。
 
 ## 7. 剩余风险
 
