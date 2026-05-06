@@ -17,6 +17,7 @@ class Settings:
     signal_engine_url: str = os.getenv("SIGNAL_ENGINE_URL", "http://localhost:8009")
     risk_engine_url: str = os.getenv("RISK_ENGINE_URL", "http://localhost:8013")
     paper_trading_service_url: str = os.getenv("PAPER_TRADING_SERVICE_URL", "http://localhost:8014")
+    paper_monitor_service_url: str = os.getenv("PAPER_MONITOR_SERVICE_URL", "http://localhost:8015")
     redis_url: str = os.getenv("REDIS_URL", "redis://localhost:6379/0")
     jwt_secret: str = os.getenv("JWT_SECRET", "change_me")
     log_level: str = os.getenv("LOG_LEVEL", "INFO")
