@@ -1,5 +1,7 @@
 from app.middleware.permissions import require_permission
 from astra_common.errors import AppError
+from astra_common.security import create_jwt
+from app.config import settings
 
 
 class RequestState:
@@ -54,3 +56,11 @@ def test_lifecycle_manage_permission_rejected_for_read_only():
         assert exc.code == "FORBIDDEN"
     else:
         raise AssertionError("lifecycle manage should require explicit permission")
+
+
+def test_access_token_includes_jti_for_blacklist():
+    token = create_jwt("u001", settings.jwt_secret, 60, {"token_type": "access", "jti": "jwt-id", "permissions": ["*"]})
+    from astra_common.security import decode_jwt
+
+    payload = decode_jwt(token, settings.jwt_secret)
+    assert payload["jti"] == "jwt-id"

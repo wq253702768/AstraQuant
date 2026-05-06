@@ -21,7 +21,8 @@ interface AuthState {
   isLoading: boolean;
   login: (payload: LoginRequest) => Promise<void>;
   loadCurrentUser: () => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
+  clearSession: () => void;
 }
 
 function permissionsOf(user: CurrentUser | null): string[] {
@@ -100,7 +101,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
-  logout: () => {
+  clearSession: () => {
     clearAuthStorage();
     set({
       accessToken: null,
@@ -111,5 +112,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       isHydrating: false,
       isLoading: false,
     });
+  },
+
+  logout: async () => {
+    const refreshToken = get().refreshToken;
+    try {
+      if (refreshToken) {
+        await authApi.logout({ refresh_token: refreshToken });
+      }
+    } finally {
+      get().clearSession();
+    }
   },
 }));

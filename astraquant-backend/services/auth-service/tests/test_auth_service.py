@@ -29,3 +29,13 @@ def test_token_service_refresh_token_claims():
     payload = TokenService().decode(token)
     assert payload["sub"] == "u001"
     assert payload["token_type"] == "refresh"
+    assert payload["jti"]
+
+
+def test_token_hash_is_stable_and_not_plaintext():
+    service = TokenService()
+    token = service.create_refresh_token("u001")
+    hashed = service.hash_token(token)
+    assert hashed == service.hash_token(token)
+    assert hashed != token
+    assert len(hashed) == 64

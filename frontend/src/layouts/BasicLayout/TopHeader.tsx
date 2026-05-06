@@ -14,7 +14,7 @@ export function TopHeader() {
   const logout = useAuthStore((state) => state.logout);
 
   const handleLogout = () => {
-    logout();
+    void logout();
     navigate(routePaths.login, { replace: true });
   };
 

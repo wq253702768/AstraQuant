@@ -27,6 +27,7 @@ import { RiskSettingsPage } from '@/features/system-settings/risk/pages/RiskSett
 import { UsersPage } from '@/features/system-settings/users/pages/UsersPage';
 import { RolesPage } from '@/features/system-settings/roles/pages/RolesPage';
 import { NotificationsPage } from '@/features/system-settings/notifications/pages/NotificationsPage';
+import { ChangePasswordPage } from '@/features/system-settings/password/pages/ChangePasswordPage';
 
 export const router = createBrowserRouter([
   {
@@ -65,6 +66,7 @@ export const router = createBrowserRouter([
       { path: 'system-settings/users', element: <UsersPage /> },
       { path: 'system-settings/roles', element: <RolesPage /> },
       { path: 'system-settings/notifications', element: <NotificationsPage /> },
+      { path: 'system-settings/password', element: <ChangePasswordPage /> },
     ],
   },
 ]);

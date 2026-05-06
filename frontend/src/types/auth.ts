@@ -37,5 +37,19 @@ export interface LoginResponse {
 
 export interface RefreshTokenResponse {
   access_token: string;
+  refresh_token: string;
   expires_in: number;
+}
+
+export interface LogoutRequest {
+  refresh_token: string;
+}
+
+export interface ChangePasswordRequest {
+  old_password: string;
+  new_password: string;
+}
+
+export interface OperationSuccessResponse {
+  success: boolean;
 }

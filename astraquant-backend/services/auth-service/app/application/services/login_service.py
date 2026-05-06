@@ -22,9 +22,13 @@ class LoginService:
             raise AppError(ErrorCode.FORBIDDEN, "用户已被禁用", 403)
         if not self.password_service.verify(password, model.password_hash):
             await self.user_repository.write_login_log(username, False, user_id=user.id, failure_reason="WRONG_PASSWORD", ip_address=ip_address, user_agent=user_agent)
+            await self.user_repository.write_audit_event("USER_LOGIN_FAILED", "LOGIN", actor_id=user.id, actor_username=username, resource_type="user_account", resource_id=user.id, metadata_json={"reason": "WRONG_PASSWORD"}, ip_address=ip_address, user_agent=user_agent)
             raise AppError(ErrorCode.UNAUTHORIZED, "用户名或密码错误", 401)
         access_token = self.token_service.create_access_token(user.id, user.roles, user.permissions)
         refresh_token = self.token_service.create_refresh_token(user.id)
+        refresh_payload = self.token_service.decode(refresh_token)
+        await self.user_repository.save_refresh_token(user.id, self.token_service.hash_token(refresh_token), self.token_service.expires_at(refresh_payload), ip_address, user_agent)
         await self.user_repository.touch_last_login(user.id)
         await self.user_repository.write_login_log(username, True, user_id=user.id, ip_address=ip_address, user_agent=user_agent)
+        await self.user_repository.write_audit_event("USER_LOGIN", "LOGIN", actor_id=user.id, actor_username=username, resource_type="user_account", resource_id=user.id, ip_address=ip_address, user_agent=user_agent)
         return LoginResponse(access_token=access_token, refresh_token=refresh_token, expires_in=settings.jwt_access_expire_seconds, user=UserTokenInfo(id=user.id, username=user.username, display_name=user.display_name, roles=user.roles))
