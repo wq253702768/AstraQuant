@@ -49,6 +49,9 @@ PERMISSION_NAMES = {
     "paper_trading:manage": "管理模拟盘",
     "paper_monitor:read": "查看模拟盘监控",
     "paper_monitor:manage": "管理模拟盘观察",
+    "exchange_account:read": "查看交易所账户",
+    "exchange_account:manage": "管理交易所账户",
+    "exchange_credential:manage": "管理交易所凭证",
 }
 
 async def main() -> None:

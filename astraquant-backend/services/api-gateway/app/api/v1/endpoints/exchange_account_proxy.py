@@ -1,0 +1,22 @@
+from fastapi import APIRouter, Request
+from app.clients.exchange_account_client import ExchangeAccountClient
+from app.middleware.permissions import require_permission
+router=APIRouter(tags=["exchange-accounts"])
+@router.post("/api/exchange-accounts")
+async def create(payload: dict, request: Request): require_permission(request,"exchange_account:manage"); return await ExchangeAccountClient().request("POST","/exchange-accounts",request,payload)
+@router.get("/api/exchange-accounts")
+async def list_accounts(request: Request): require_permission(request,"exchange_account:read"); return await ExchangeAccountClient().request("GET","/exchange-accounts",request,params=dict(request.query_params))
+@router.post("/api/exchange-accounts/{account_id}/credentials")
+async def creds(account_id: str, payload: dict, request: Request): require_permission(request,"exchange_credential:manage"); return await ExchangeAccountClient().request("POST",f"/exchange-accounts/{account_id}/credentials",request,payload)
+@router.post("/api/exchange-accounts/{account_id}/test-connectivity")
+async def conn(account_id: str, request: Request): require_permission(request,"exchange_account:manage"); return await ExchangeAccountClient().request("POST",f"/exchange-accounts/{account_id}/test-connectivity",request)
+@router.post("/api/exchange-accounts/{account_id}/enable")
+async def enable(account_id: str, payload: dict, request: Request): require_permission(request,"exchange_account:manage"); return await ExchangeAccountClient().request("POST",f"/exchange-accounts/{account_id}/enable",request,payload)
+@router.post("/api/exchange-accounts/{account_id}/disable")
+async def disable(account_id: str, payload: dict, request: Request): require_permission(request,"exchange_account:manage"); return await ExchangeAccountClient().request("POST",f"/exchange-accounts/{account_id}/disable",request,payload)
+@router.get("/api/exchange-accounts/{account_id}/state")
+async def state(account_id: str, request: Request): require_permission(request,"exchange_account:read"); return await ExchangeAccountClient().request("GET",f"/exchange-accounts/{account_id}/state",request)
+@router.get("/api/exchange-accounts/{account_id}/positions")
+async def positions(account_id: str, request: Request): require_permission(request,"exchange_account:read"); return await ExchangeAccountClient().request("GET",f"/exchange-accounts/{account_id}/positions",request)
+@router.get("/api/exchange-accounts/{account_id}/orders")
+async def orders(account_id: str, request: Request): require_permission(request,"exchange_account:read"); return await ExchangeAccountClient().request("GET",f"/exchange-accounts/{account_id}/orders",request,params=dict(request.query_params))
