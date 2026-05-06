@@ -172,6 +172,13 @@ Sprint 11 新增信号服务：
 - `POST /api/signal-runtime/reload`
 - `POST /api/signal-runtime/strategies/{id}/pause`
 
+Sprint 12 新增实时风控服务接口：
+
+- `GET /api/risk/decisions`
+- `GET /api/risk/decisions/{id}`
+- `GET /api/risk/rules`
+- `POST /api/risk/check`
+
 Sprint 2 新增策略服务接口：
 
 - `GET /api/strategy-templates`

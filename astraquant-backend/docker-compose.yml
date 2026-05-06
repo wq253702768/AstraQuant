@@ -365,6 +365,31 @@ services:
       - strategy-score-service
       - realtime-state-service
 
+  risk-engine:
+    build:
+      context: .
+      dockerfile: services/risk-engine/Dockerfile
+    container_name: astraquant-risk-engine
+    environment:
+      SERVICE_NAME: risk-engine
+      ENV: dev
+      HTTP_PORT: 8013
+      POSTGRES_DSN: postgres://astra:astra_password@postgres:5432/astraquant?sslmode=disable
+      REDIS_ADDR: redis:6379
+      NATS_URL: nats://nats:4222
+      REALTIME_STATE_SERVICE_URL: http://realtime-state-service:8012
+      STRATEGY_SERVICE_URL: http://strategy-service:8002
+      SIGNAL_ENGINE_URL: http://signal-engine:8009
+      LOG_LEVEL: INFO
+    ports:
+      - "8013:8013"
+    depends_on:
+      - postgres
+      - redis
+      - nats
+      - realtime-state-service
+      - signal-engine
+
   api-gateway:
     build:
       context: .
@@ -383,6 +408,7 @@ services:
       REPORT_SERVICE_URL: http://report-service:8008
       REALTIME_STATE_SERVICE_URL: http://realtime-state-service:8012
       SIGNAL_ENGINE_URL: http://signal-engine:8009
+      RISK_ENGINE_URL: http://risk-engine:8013
       REDIS_URL: redis://redis:6379/0
       JWT_SECRET: change_me
       LOG_LEVEL: INFO
@@ -399,6 +425,7 @@ services:
       - report-service
       - realtime-state-service
       - signal-engine
+      - risk-engine
 
 volumes:
   postgres_data:

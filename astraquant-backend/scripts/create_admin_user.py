@@ -43,6 +43,8 @@ PERMISSION_NAMES = {
     "market_state:read": "查看实时行情状态",
     "signal:read": "查看交易信号",
     "signal:manage": "管理信号运行",
+    "risk:read": "查看风控决策",
+    "risk:manage": "管理风控",
 }
 
 async def main() -> None:
