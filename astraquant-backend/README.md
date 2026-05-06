@@ -52,6 +52,26 @@ uvicorn app.main:app --host 0.0.0.0 --port 8002
 - `WS /api/ws/tasks`
 - `WS /api/ws/realtime`
 
+## Sprint 3 Exchange Gateway
+
+Exchange Access Gateway 位于 `services/exchange-access-gateway/`，默认监听 `8010`：
+
+```bash
+cd services/exchange-access-gateway
+go run ./cmd/server
+```
+
+常用接口：
+
+- `GET /health`
+- `GET /metrics`
+- `GET /api/v1/exchanges/OKX/time`
+- `GET /api/v1/exchanges/OKX/instruments?contract_type=swap`
+- `GET /api/v1/exchanges/OKX/klines?symbol=BTC-USDT-SWAP&timeframe=5m&limit=100`
+- `GET /api/v1/exchanges/OKX/funding-rate?symbol=BTC-USDT-SWAP`
+- `GET /api/v1/exchanges/OKX/funding-rate-history?symbol=BTC-USDT-SWAP&limit=100`
+- `GET /api/v1/exchanges/OKX/mark-price?symbol=BTC-USDT-SWAP`
+
 Sprint 2 新增策略服务接口：
 
 - `GET /api/strategy-templates`

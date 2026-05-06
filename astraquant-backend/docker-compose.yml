@@ -87,6 +87,31 @@ services:
       - redis
       - nats
 
+  exchange-access-gateway:
+    build:
+      context: .
+      dockerfile: services/exchange-access-gateway/Dockerfile
+    container_name: astraquant-exchange-access-gateway
+    environment:
+      SERVICE_NAME: exchange-access-gateway
+      ENV: dev
+      HTTP_PORT: 8010
+      POSTGRES_DSN: postgres://astra:astra_password@postgres:5432/astraquant?sslmode=disable
+      REDIS_ADDR: redis:6379
+      NATS_URL: nats://nats:4222
+      OKX_REST_BASE_URL: https://www.okx.com
+      OKX_TIMEOUT_MS: 5000
+      OKX_ENABLE_DEMO: "false"
+      LOG_LEVEL: INFO
+      RATE_LIMIT_ENABLED: "true"
+      AUDIT_ENABLED: "true"
+    ports:
+      - "8010:8010"
+    depends_on:
+      - postgres
+      - redis
+      - nats
+
   api-gateway:
     build:
       context: .
