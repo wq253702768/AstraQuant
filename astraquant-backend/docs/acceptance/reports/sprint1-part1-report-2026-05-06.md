@@ -81,6 +81,27 @@ scripts/acceptance/sprint1_part1_remote_auth.sh
 [PASS] Protected API rejects missing token
 ```
 
+### 3.4 浏览器级布局验收
+
+使用 headless Chrome 打开真实地址 `http://47.239.90.234/dashboard`，注入真实登录态后读取 DOM 布局位置。
+
+结果：
+
+```text
+aside.top = 0
+aside.left = 0
+aside.height = 1013
+header.top = 0
+header.left = 264
+main.top = 56
+main.left = 264
+pageTitle.top = 76
+pageTitle.text = 总览大盘
+LAYOUT_CHECK_PASS
+```
+
+结论：主框架已经恢复为左侧栏 + 右侧内容的横向布局，内容区不再被侧边栏高度挤到首屏底部。
+
 ## 4. 用例通过率
 
 | 类型 | 通过 | 总数 | 通过率 |
@@ -88,6 +109,7 @@ scripts/acceptance/sprint1_part1_remote_auth.sh
 | P0 API 用例 | 7 | 7 | 100% |
 | P0 远程冒烟用例 | 9 | 9 | 100% |
 | P0 后端/Gateway 自动化 | 11 | 11 | 100% |
+| P0 浏览器布局验收 | 1 | 1 | 100% |
 
 ## 5. 已验证能力
 
@@ -101,6 +123,7 @@ scripts/acceptance/sprint1_part1_remote_auth.sh
 - `refresh_token` 可刷新 `access_token`。
 - 未携带 token 访问受保护 API 会被拒绝。
 - 前端 Docker 构建通过。
+- 登录后 Dashboard 浏览器级布局验收通过。
 
 ## 6. 本次修复记录
 
