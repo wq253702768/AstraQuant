@@ -29,7 +29,7 @@ services:
 
   auth-service:
     build:
-      context: .
+      context: ../..
       dockerfile: services/auth-service/Dockerfile
     container_name: astraquant-auth-service
     restart: unless-stopped
@@ -50,7 +50,7 @@ services:
 
   api-gateway:
     build:
-      context: .
+      context: ../..
       dockerfile: services/api-gateway/Dockerfile
     container_name: astraquant-api-gateway
     restart: unless-stopped
@@ -68,7 +68,7 @@ services:
 
   frontend-web:
     build:
-      context: ..
+      context: ../../..
       dockerfile: frontend/Dockerfile
       args:
         VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://47.239.90.234:8000}
