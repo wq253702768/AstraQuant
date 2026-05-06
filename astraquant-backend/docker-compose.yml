@@ -139,6 +139,35 @@ services:
       - nats
       - exchange-access-gateway
 
+  backtest-service:
+    build:
+      context: .
+      dockerfile: services/backtest-service/Dockerfile
+    container_name: astraquant-backtest-service
+    environment:
+      SERVICE_NAME: backtest-service
+      ENV: dev
+      HTTP_PORT: 8004
+      DATABASE_URL: postgresql+asyncpg://astra:astra_password@postgres:5432/astraquant
+      CLICKHOUSE_HOST: clickhouse
+      CLICKHOUSE_PORT: 8123
+      CLICKHOUSE_USERNAME: default
+      CLICKHOUSE_PASSWORD: ""
+      CLICKHOUSE_DATABASE: astraquant
+      REDIS_URL: redis://redis:6379/0
+      NATS_URL: nats://nats:4222
+      STRATEGY_SERVICE_URL: http://strategy-service:8002
+      MARKET_DATA_SERVICE_URL: http://market-data-service:8003
+      LOG_LEVEL: INFO
+    ports:
+      - "8004:8004"
+    depends_on:
+      - postgres
+      - redis
+      - nats
+      - strategy-service
+      - market-data-service
+
   api-gateway:
     build:
       context: .
@@ -150,6 +179,7 @@ services:
       AUTH_SERVICE_URL: http://auth-service:8001
       STRATEGY_SERVICE_URL: http://strategy-service:8002
       MARKET_DATA_SERVICE_URL: http://market-data-service:8003
+      BACKTEST_SERVICE_URL: http://backtest-service:8004
       REDIS_URL: redis://redis:6379/0
       JWT_SECRET: change_me
       LOG_LEVEL: INFO
@@ -159,6 +189,7 @@ services:
       - auth-service
       - strategy-service
       - market-data-service
+      - backtest-service
 
 volumes:
   postgres_data:
