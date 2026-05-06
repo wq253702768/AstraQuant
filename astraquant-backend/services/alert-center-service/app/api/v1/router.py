@@ -1,0 +1,15 @@
+from fastapi import APIRouter, Request
+from astra_common.response import success_response
+api_router=APIRouter()
+@api_router.get("/alerts")
+async def alerts(request: Request): return success_response({"items": [], "total": 0}, request)
+@api_router.get("/alerts/{alert_id}")
+async def alert(alert_id: str, request: Request): return success_response({"alert_id": alert_id, "status":"OPEN"}, request)
+@api_router.post("/alerts/{alert_id}/acknowledge")
+async def ack(alert_id: str, request: Request): return success_response({"alert_id": alert_id, "status":"ACKNOWLEDGED"}, request)
+@api_router.post("/alerts/{alert_id}/resolve")
+async def resolve(alert_id: str, request: Request): return success_response({"alert_id": alert_id, "status":"RESOLVED"}, request)
+@api_router.post("/alerts/suppressions")
+async def suppress(request: Request): return success_response({"suppression_id":"sup_mock","enabled":True}, request)
+@api_router.get("/alerts/dashboard/overview")
+async def dashboard(request: Request): return success_response({"open_total":0,"critical_total":0,"fatal_total":0}, request)

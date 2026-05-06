@@ -60,6 +60,9 @@ PERMISSION_NAMES = {
     "live_risk:emergency": "实盘紧急控制",
     "live_monitor:read": "查看实盘监控",
     "live_monitor:manage": "管理实盘观察",
+    "alert:read": "查看告警",
+    "alert:manage": "管理告警",
+    "audit:export": "导出审计",
 }
 
 async def main() -> None:
