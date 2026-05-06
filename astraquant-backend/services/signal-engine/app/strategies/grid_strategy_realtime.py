@@ -1,0 +1,2 @@
+from app.strategies.trend_breakout_realtime import TrendBreakoutRealtime
+class GridStrategyRealtime(TrendBreakoutRealtime): pass
