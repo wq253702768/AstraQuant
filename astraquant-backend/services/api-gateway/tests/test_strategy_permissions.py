@@ -31,3 +31,20 @@ def test_market_data_permission_allows():
     request = FakeRequest()
     request.state.user = {"permissions": ["market_data:read"]}
     require_permission(request, "market_data:read")
+
+
+def test_lifecycle_read_permission_allows():
+    request = FakeRequest()
+    request.state.user = {"permissions": ["lifecycle:read"]}
+    require_permission(request, "lifecycle:read")
+
+
+def test_lifecycle_manage_permission_rejected_for_read_only():
+    request = FakeRequest()
+    request.state.user = {"permissions": ["lifecycle:read"]}
+    try:
+        require_permission(request, "lifecycle:manage")
+    except AppError as exc:
+        assert exc.code == "FORBIDDEN"
+    else:
+        raise AssertionError("lifecycle manage should require explicit permission")

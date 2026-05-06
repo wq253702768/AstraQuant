@@ -24,6 +24,7 @@ class Settings:
     live_trading_monitor_service_url: str = os.getenv("LIVE_TRADING_MONITOR_SERVICE_URL", "http://localhost:8020")
     alert_center_service_url: str = os.getenv("ALERT_CENTER_SERVICE_URL", "http://localhost:8021")
     audit_center_service_url: str = os.getenv("AUDIT_CENTER_SERVICE_URL", "http://localhost:8022")
+    strategy_lifecycle_center_url: str = os.getenv("STRATEGY_LIFECYCLE_CENTER_URL", "http://localhost:8023")
     redis_url: str = os.getenv("REDIS_URL", "redis://localhost:6379/0")
     jwt_secret: str = os.getenv("JWT_SECRET", "change_me")
     log_level: str = os.getenv("LOG_LEVEL", "INFO")

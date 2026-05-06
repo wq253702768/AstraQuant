@@ -606,6 +606,46 @@ services:
       - nats
       - minio
 
+  strategy-lifecycle-center:
+    build:
+      context: .
+      dockerfile: services/strategy-lifecycle-center/Dockerfile
+    container_name: astraquant-strategy-lifecycle-center
+    environment:
+      SERVICE_NAME: strategy-lifecycle-center
+      ENV: dev
+      HTTP_PORT: 8023
+      DATABASE_URL: postgresql+asyncpg://astra:astra_password@postgres:5432/astraquant
+      REDIS_URL: redis://redis:6379/0
+      NATS_URL: nats://nats:4222
+      STRATEGY_SERVICE_URL: http://strategy-service:8002
+      BACKTEST_SERVICE_URL: http://backtest-service:8004
+      AI_ANALYSIS_SERVICE_URL: http://ai-analysis-service:8006
+      STRATEGY_SCORE_SERVICE_URL: http://strategy-score-service:8007
+      PAPER_MONITOR_SERVICE_URL: http://paper-monitor-service:8015
+      LIVE_MONITOR_SERVICE_URL: http://live-trading-monitor-service:8020
+      ORDER_EXECUTOR_SERVICE_URL: http://order-executor-service:8018
+      LIVE_RISK_GUARD_SERVICE_URL: http://live-risk-guard-service:8019
+      ALERT_CENTER_SERVICE_URL: http://alert-center-service:8021
+      AUDIT_CENTER_SERVICE_URL: http://audit-center-service:8022
+      AUTO_TRANSITION_ENABLED: "true"
+      AUTO_APPROVAL_ENABLED: "false"
+      LOG_LEVEL: INFO
+    ports:
+      - "8023:8023"
+    depends_on:
+      - postgres
+      - redis
+      - nats
+      - strategy-service
+      - backtest-service
+      - ai-analysis-service
+      - strategy-score-service
+      - paper-monitor-service
+      - live-trading-monitor-service
+      - alert-center-service
+      - audit-center-service
+
   api-gateway:
     build:
       context: .
@@ -633,6 +673,7 @@ services:
       LIVE_MONITOR_SERVICE_URL: http://live-trading-monitor-service:8020
       ALERT_CENTER_SERVICE_URL: http://alert-center-service:8021
       AUDIT_CENTER_SERVICE_URL: http://audit-center-service:8022
+      STRATEGY_LIFECYCLE_CENTER_URL: http://strategy-lifecycle-center:8023
       REDIS_URL: redis://redis:6379/0
       JWT_SECRET: change_me
       LOG_LEVEL: INFO
@@ -658,6 +699,7 @@ services:
       - live-trading-monitor-service
       - alert-center-service
       - audit-center-service
+      - strategy-lifecycle-center
 
 volumes:
   postgres_data:

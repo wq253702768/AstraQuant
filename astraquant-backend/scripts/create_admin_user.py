@@ -63,6 +63,10 @@ PERMISSION_NAMES = {
     "alert:read": "查看告警",
     "alert:manage": "管理告警",
     "audit:export": "导出审计",
+    "lifecycle:read": "查看策略生命周期",
+    "lifecycle:apply": "发起生命周期申请",
+    "lifecycle:approve": "审批策略生命周期",
+    "lifecycle:manage": "管理策略生命周期",
 }
 
 async def main() -> None:

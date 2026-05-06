@@ -262,6 +262,22 @@ Sprint 19 新增告警与审计中心接口：
 - `POST /api/audit/exports`
 - `GET /api/audit/dashboard/overview`
 
+Sprint 20 新增策略生命周期闭环中心接口：
+
+- `GET /api/lifecycle/strategies`
+- `GET /api/lifecycle/strategies/{id}`
+- `GET /api/lifecycle/strategies/{id}/timeline`
+- `GET /api/lifecycle/strategies/{id}/evidence`
+- `POST /api/lifecycle/strategies/{id}/gates/evaluate`
+- `POST /api/lifecycle/strategies/{id}/applications/small-live`
+- `POST /api/lifecycle/strategies/{id}/applications/scale-up`
+- `POST /api/lifecycle/approvals/{id}/approve`
+- `POST /api/lifecycle/approvals/{id}/reject`
+- `POST /api/lifecycle/strategies/{id}/rollback-to-paper`
+- `POST /api/lifecycle/strategies/{id}/pause`
+- `POST /api/lifecycle/strategies/{id}/retire`
+- `GET /api/lifecycle/dashboard/overview`
+
 Sprint 2 新增策略服务接口：
 
 - `GET /api/strategy-templates`
