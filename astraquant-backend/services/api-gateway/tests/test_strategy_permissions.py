@@ -33,6 +33,12 @@ def test_market_data_permission_allows():
     require_permission(request, "market_data:read")
 
 
+def test_admin_wildcard_permission_allows_auth_me_proxy():
+    request = FakeRequest()
+    request.state.user = {"permissions": ["*"]}
+    require_permission(request, "auth:me")
+
+
 def test_lifecycle_read_permission_allows():
     request = FakeRequest()
     request.state.user = {"permissions": ["lifecycle:read"]}

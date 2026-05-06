@@ -1,5 +1,5 @@
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Form, Input, Select, Typography } from 'antd';
+import { Button, Checkbox, Form, Input, Select, Typography, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
 import { routePaths } from '@/app/router/routePaths';
@@ -9,11 +9,17 @@ const { Text, Title } = Typography;
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const login = useAuthStore((state) => state.loginAsDemo);
+  const login = useAuthStore((state) => state.login);
+  const isLoading = useAuthStore((state) => state.isLoading);
 
-  const handleLogin = () => {
-    login();
-    navigate(routePaths.dashboard, { replace: true });
+  const handleLogin = async (values: { username: string; password: string }) => {
+    try {
+      await login(values);
+      navigate(routePaths.dashboard, { replace: true });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : '登录失败，请检查账号和密码';
+      message.error(errorMessage);
+    }
   };
 
   return (
@@ -43,17 +49,17 @@ export function LoginPage() {
               ]}
             />
           </Form.Item>
-          <Form.Item label="邮箱 / 用户名" name="username" rules={[{ required: true, message: '请输入账号' }]}>
-            <Input prefix={<MailOutlined />} placeholder="quant@astraquant.ai" />
+          <Form.Item label="邮箱 / 用户名" name="username" initialValue="admin" rules={[{ required: true, message: '请输入账号' }]}>
+            <Input prefix={<MailOutlined />} placeholder="admin" autoComplete="username" />
           </Form.Item>
           <Form.Item label="密码" name="password" rules={[{ required: true, message: '请输入密码' }]}>
-            <Input.Password prefix={<LockOutlined />} placeholder="请输入密码" />
+            <Input.Password prefix={<LockOutlined />} placeholder="请输入密码" autoComplete="current-password" />
           </Form.Item>
           <div className={styles.options}>
             <Checkbox>记住登录</Checkbox>
             <a>忘记密码</a>
           </div>
-          <Button type="primary" htmlType="submit" size="large" block>
+          <Button type="primary" htmlType="submit" size="large" loading={isLoading} block>
             登录
           </Button>
           <Button size="large" block>
