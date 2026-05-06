@@ -24,6 +24,18 @@ pip install -e services/market-data-service
 PYTHONPATH=shared/python:services/auth-service python scripts/create_admin_user.py
 ```
 
+## Staging 部署
+
+服务器部署方案见 `docs/deployment/staging-server-deployment.md`。部署脚本不会读取或保存服务器密码，推荐使用专用 deploy 用户和 SSH Key：
+
+```bash
+export ASTRA_STAGING_HOST=47.239.90.234
+export ASTRA_STAGING_USER=deploy
+export ASTRA_STAGING_SSH_KEY=~/.ssh/astraquant_staging
+./scripts/deploy/staging_deploy.sh
+./scripts/deploy/staging_healthcheck.sh
+```
+
 启动 Auth Service：
 
 ```bash
