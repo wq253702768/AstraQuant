@@ -52,6 +52,10 @@ PERMISSION_NAMES = {
     "exchange_account:read": "查看交易所账户",
     "exchange_account:manage": "管理交易所账户",
     "exchange_credential:manage": "管理交易所凭证",
+    "order_executor:read": "查看订单执行",
+    "order_executor:dry_run": "订单执行Dry Run",
+    "order_executor:manage": "管理订单执行",
+    "order_executor:kill_switch": "管理订单熔断",
 }
 
 async def main() -> None:
