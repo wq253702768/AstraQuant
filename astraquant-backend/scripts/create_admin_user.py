@@ -58,6 +58,8 @@ PERMISSION_NAMES = {
     "order_executor:kill_switch": "管理订单熔断",
     "live_risk:read": "查看实盘风险",
     "live_risk:emergency": "实盘紧急控制",
+    "live_monitor:read": "查看实盘监控",
+    "live_monitor:manage": "管理实盘观察",
 }
 
 async def main() -> None:

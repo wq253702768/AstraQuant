@@ -21,6 +21,7 @@ class Settings:
     exchange_account_service_url: str = os.getenv("EXCHANGE_ACCOUNT_SERVICE_URL", "http://localhost:8016")
     order_executor_service_url: str = os.getenv("ORDER_EXECUTOR_SERVICE_URL", "http://localhost:8018")
     live_risk_guard_service_url: str = os.getenv("LIVE_RISK_GUARD_SERVICE_URL", "http://localhost:8019")
+    live_trading_monitor_service_url: str = os.getenv("LIVE_TRADING_MONITOR_SERVICE_URL", "http://localhost:8020")
     redis_url: str = os.getenv("REDIS_URL", "redis://localhost:6379/0")
     jwt_secret: str = os.getenv("JWT_SECRET", "change_me")
     log_level: str = os.getenv("LOG_LEVEL", "INFO")

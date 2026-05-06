@@ -232,6 +232,22 @@ Sprint 17 新增实盘安全控制接口：
 - `POST /api/live-risk/emergency-controls/{id}/release`
 - `GET /api/live-risk/rules`
 
+Sprint 18 新增实盘监控驾驶舱接口：
+
+- `GET /api/live-monitor/dashboard/overview`
+- `GET /api/live-monitor/accounts/{id}/summary`
+- `GET /api/live-monitor/strategies/{id}/summary`
+- `GET /api/live-monitor/positions`
+- `GET /api/live-monitor/orders`
+- `GET /api/live-monitor/trades`
+- `GET /api/live-monitor/equity-curve`
+- `GET /api/live-monitor/risk-events`
+- `POST /api/live-monitor/observations`
+- `POST /api/live-monitor/observations/{id}/admission/calculate`
+- `GET /api/live-monitor/admission-results/{id}`
+- `GET /api/live-monitor/comparisons/paper-live`
+- `GET /api/live-monitor/daily-reports`
+
 Sprint 2 新增策略服务接口：
 
 - `GET /api/strategy-templates`

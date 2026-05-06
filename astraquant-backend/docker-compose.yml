@@ -534,6 +534,34 @@ services:
       - nats
       - order-executor-service
 
+  live-trading-monitor-service:
+    build:
+      context: .
+      dockerfile: services/live-trading-monitor-service/Dockerfile
+    container_name: astraquant-live-trading-monitor-service
+    environment:
+      SERVICE_NAME: live-trading-monitor-service
+      ENV: dev
+      HTTP_PORT: 8020
+      DATABASE_URL: postgresql+asyncpg://astra:astra_password@postgres:5432/astraquant
+      REDIS_URL: redis://redis:6379/0
+      NATS_URL: nats://nats:4222
+      EXCHANGE_ACCOUNT_SERVICE_URL: http://exchange-account-service:8016
+      ORDER_EXECUTOR_SERVICE_URL: http://order-executor-service:8018
+      LIVE_RISK_GUARD_SERVICE_URL: http://live-risk-guard-service:8019
+      PAPER_MONITOR_SERVICE_URL: http://paper-monitor-service:8015
+      STRATEGY_SERVICE_URL: http://strategy-service:8002
+      REPORT_SERVICE_URL: http://report-service:8008
+      LOG_LEVEL: INFO
+    ports:
+      - "8020:8020"
+    depends_on:
+      - postgres
+      - redis
+      - nats
+      - order-executor-service
+      - live-risk-guard-service
+
   api-gateway:
     build:
       context: .
@@ -558,6 +586,7 @@ services:
       EXCHANGE_ACCOUNT_SERVICE_URL: http://exchange-account-service:8016
       ORDER_EXECUTOR_SERVICE_URL: http://order-executor-service:8018
       LIVE_RISK_GUARD_SERVICE_URL: http://live-risk-guard-service:8019
+      LIVE_MONITOR_SERVICE_URL: http://live-trading-monitor-service:8020
       REDIS_URL: redis://redis:6379/0
       JWT_SECRET: change_me
       LOG_LEVEL: INFO
@@ -580,6 +609,7 @@ services:
       - exchange-account-service
       - order-executor-service
       - live-risk-guard-service
+      - live-trading-monitor-service
 
 volumes:
   postgres_data:
