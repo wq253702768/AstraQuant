@@ -1,0 +1,3 @@
+from fastapi import APIRouter
+from app.api.v1.endpoints import accounts, admission, comparisons, dashboard, equity, observations, orders, positions, reports, risk_events, strategies, trades
+api_router=APIRouter(); api_router.include_router(dashboard.router); api_router.include_router(accounts.router); api_router.include_router(strategies.router); api_router.include_router(positions.router); api_router.include_router(orders.router); api_router.include_router(trades.router); api_router.include_router(equity.router); api_router.include_router(risk_events.router); api_router.include_router(observations.router); api_router.include_router(admission.router); api_router.include_router(comparisons.router); api_router.include_router(reports.router)
