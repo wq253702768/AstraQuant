@@ -562,6 +562,50 @@ services:
       - order-executor-service
       - live-risk-guard-service
 
+  alert-center-service:
+    build:
+      context: .
+      dockerfile: services/alert-center-service/Dockerfile
+    container_name: astraquant-alert-center-service
+    environment:
+      SERVICE_NAME: alert-center-service
+      ENV: dev
+      HTTP_PORT: 8021
+      DATABASE_URL: postgresql+asyncpg://astra:astra_password@postgres:5432/astraquant
+      REDIS_URL: redis://redis:6379/0
+      NATS_URL: nats://nats:4222
+      LOG_LEVEL: INFO
+    ports:
+      - "8021:8021"
+    depends_on:
+      - postgres
+      - redis
+      - nats
+
+  audit-center-service:
+    build:
+      context: .
+      dockerfile: services/audit-center-service/Dockerfile
+    container_name: astraquant-audit-center-service
+    environment:
+      SERVICE_NAME: audit-center-service
+      ENV: dev
+      HTTP_PORT: 8022
+      DATABASE_URL: postgresql+asyncpg://astra:astra_password@postgres:5432/astraquant
+      REDIS_URL: redis://redis:6379/0
+      NATS_URL: nats://nats:4222
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio_password
+      LOG_LEVEL: INFO
+    ports:
+      - "8022:8022"
+    depends_on:
+      - postgres
+      - redis
+      - nats
+      - minio
+
   api-gateway:
     build:
       context: .
@@ -587,6 +631,8 @@ services:
       ORDER_EXECUTOR_SERVICE_URL: http://order-executor-service:8018
       LIVE_RISK_GUARD_SERVICE_URL: http://live-risk-guard-service:8019
       LIVE_MONITOR_SERVICE_URL: http://live-trading-monitor-service:8020
+      ALERT_CENTER_SERVICE_URL: http://alert-center-service:8021
+      AUDIT_CENTER_SERVICE_URL: http://audit-center-service:8022
       REDIS_URL: redis://redis:6379/0
       JWT_SECRET: change_me
       LOG_LEVEL: INFO
@@ -610,6 +656,8 @@ services:
       - order-executor-service
       - live-risk-guard-service
       - live-trading-monitor-service
+      - alert-center-service
+      - audit-center-service
 
 volumes:
   postgres_data:

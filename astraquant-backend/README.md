@@ -248,6 +248,20 @@ Sprint 18 新增实盘监控驾驶舱接口：
 - `GET /api/live-monitor/comparisons/paper-live`
 - `GET /api/live-monitor/daily-reports`
 
+Sprint 19 新增告警与审计中心接口：
+
+- `GET /api/alerts`
+- `GET /api/alerts/{id}`
+- `POST /api/alerts/{id}/acknowledge`
+- `POST /api/alerts/{id}/resolve`
+- `POST /api/alerts/suppressions`
+- `GET /api/alerts/dashboard/overview`
+- `GET /api/audit/events`
+- `GET /api/audit/events/{id}`
+- `GET /api/audit/traces/{trace_id}`
+- `POST /api/audit/exports`
+- `GET /api/audit/dashboard/overview`
+
 Sprint 2 新增策略服务接口：
 
 - `GET /api/strategy-templates`
