@@ -5,7 +5,7 @@ import type {
   LoginRequest,
   LoginResponse,
   LogoutRequest,
-  OperationSuccess,
+  OperationSuccessResponse,
   RefreshTokenResponse,
 } from '@/types/auth';
 
@@ -24,11 +24,11 @@ function refresh(refreshToken: string) {
 }
 
 function logout(payload: LogoutRequest) {
-  return request.post<unknown, OperationSuccess>('/api/auth/logout', payload);
+  return request.post<unknown, OperationSuccessResponse>('/api/auth/logout', payload);
 }
 
 function changePassword(payload: ChangePasswordRequest) {
-  return request.put<unknown, OperationSuccess>('/api/auth/password', payload);
+  return request.put<unknown, OperationSuccessResponse>('/api/auth/password', payload);
 }
 
 export const authApi = {
