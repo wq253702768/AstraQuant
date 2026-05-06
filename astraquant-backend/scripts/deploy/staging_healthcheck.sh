@@ -5,6 +5,7 @@ HOST="${ASTRA_STAGING_HOST:-47.239.90.234}"
 GATEWAY_URL="${ASTRA_GATEWAY_URL:-http://${HOST}:8000}"
 AUTH_URL="${ASTRA_AUTH_URL:-http://${HOST}:8001}"
 LIFECYCLE_URL="${ASTRA_LIFECYCLE_URL:-http://${HOST}:8023}"
+FRONTEND_URL="${ASTRA_FRONTEND_URL:-http://${HOST}:5173}"
 
 check() {
   local name="$1"
@@ -17,5 +18,6 @@ check() {
 check "api-gateway" "${GATEWAY_URL}/health"
 check "auth-service" "${AUTH_URL}/health"
 check "strategy-lifecycle-center" "${LIFECYCLE_URL}/health"
+check "frontend-web" "${FRONTEND_URL}/"
 
 echo "[healthcheck] staging environment baseline checks passed"

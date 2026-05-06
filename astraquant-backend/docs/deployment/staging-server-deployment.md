@@ -40,7 +40,7 @@ docker compose 构建并启动服务
 
 ```text
 /opt/astraquant/
-├── repo/                 # Git 工作目录
+├── app/                  # 服务器上的仓库同步目录
 ├── env/                  # 服务器本地环境变量，不入 Git
 ├── logs/                 # 运维日志
 ├── backups/              # 数据库和配置备份
@@ -50,7 +50,7 @@ docker compose 构建并启动服务
 当前第一阶段采用：
 
 ```text
-/opt/astraquant/repo
+/opt/astraquant/app
 ```
 
 作为仓库目录。
@@ -141,6 +141,7 @@ ASTRA_STAGING_HOST=47.239.90.234 ./scripts/deploy/staging_healthcheck.sh
 - Strategy Service `/health`
 - Backtest Service `/health`
 - Strategy Lifecycle Center `/health`
+- Frontend Web `/`
 
 后续每个 Sprint 完善时，应把该 Sprint 的关键健康检查和验收 API 加入脚本。
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 
 : "${ASTRA_STAGING_HOST:?Set ASTRA_STAGING_HOST, for example 47.239.90.234}"
 : "${ASTRA_STAGING_USER:=deploy}"
@@ -24,22 +24,23 @@ rsync -az --delete \
   --exclude "**/.pytest_cache" \
   --exclude "**/__pycache__" \
   --exclude "frontend/node_modules" \
+  --exclude "frontend/dist" \
   --exclude "astraquant-backend/.venv" \
   -e "ssh ${SSH_OPTS[*]}" \
-  "$ROOT_DIR/" "$REMOTE:$ASTRA_STAGING_APP_DIR/"
+  "$REPO_ROOT/" "$REMOTE:$ASTRA_STAGING_APP_DIR/"
 
 echo "==> Checking staging env file"
 ssh "${SSH_OPTS[@]}" "$REMOTE" "test -f '$ASTRA_STAGING_ENV_FILE' || (echo 'Missing $ASTRA_STAGING_ENV_FILE on server. Copy deploy/staging/.env.staging.example there and fill secrets.' >&2; exit 2)"
 
 echo "==> Building and starting staging stack"
-ssh "${SSH_OPTS[@]}" "$REMOTE" "cd '$ASTRA_STAGING_APP_DIR' && docker compose --env-file '$ASTRA_STAGING_ENV_FILE' -f docker-compose.yml -f deploy/staging/docker-compose.staging.yml up -d --build"
+ssh "${SSH_OPTS[@]}" "$REMOTE" "cd '$ASTRA_STAGING_APP_DIR/astraquant-backend' && docker compose --env-file '$ASTRA_STAGING_ENV_FILE' -f docker-compose.yml -f deploy/staging/docker-compose.staging.yml up -d --build"
 
 echo "==> Running database migrations"
-ssh "${SSH_OPTS[@]}" "$REMOTE" "cd '$ASTRA_STAGING_APP_DIR' && docker compose --env-file '$ASTRA_STAGING_ENV_FILE' -f docker-compose.yml -f deploy/staging/docker-compose.staging.yml run --rm auth-service alembic upgrade head"
-ssh "${SSH_OPTS[@]}" "$REMOTE" "cd '$ASTRA_STAGING_APP_DIR' && docker compose --env-file '$ASTRA_STAGING_ENV_FILE' -f docker-compose.yml -f deploy/staging/docker-compose.staging.yml run --rm strategy-lifecycle-center alembic upgrade head"
+ssh "${SSH_OPTS[@]}" "$REMOTE" "cd '$ASTRA_STAGING_APP_DIR/astraquant-backend' && docker compose --env-file '$ASTRA_STAGING_ENV_FILE' -f docker-compose.yml -f deploy/staging/docker-compose.staging.yml run --rm auth-service alembic upgrade head"
+ssh "${SSH_OPTS[@]}" "$REMOTE" "cd '$ASTRA_STAGING_APP_DIR/astraquant-backend' && docker compose --env-file '$ASTRA_STAGING_ENV_FILE' -f docker-compose.yml -f deploy/staging/docker-compose.staging.yml run --rm strategy-lifecycle-center alembic upgrade head"
 
 echo "==> Seeding admin user"
-ssh "${SSH_OPTS[@]}" "$REMOTE" "cd '$ASTRA_STAGING_APP_DIR' && docker compose --env-file '$ASTRA_STAGING_ENV_FILE' -f docker-compose.yml -f deploy/staging/docker-compose.staging.yml run --rm -v '$ASTRA_STAGING_APP_DIR/scripts:/scripts:ro' auth-service python /scripts/create_admin_user.py || true"
+ssh "${SSH_OPTS[@]}" "$REMOTE" "cd '$ASTRA_STAGING_APP_DIR/astraquant-backend' && docker compose --env-file '$ASTRA_STAGING_ENV_FILE' -f docker-compose.yml -f deploy/staging/docker-compose.staging.yml run --rm -v '$ASTRA_STAGING_APP_DIR/astraquant-backend/scripts:/scripts:ro' auth-service python /scripts/create_admin_user.py || true"
 
 echo "==> Deployment command finished"
 echo "Run scripts/deploy/staging_healthcheck.sh to verify public endpoints."
