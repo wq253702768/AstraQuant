@@ -7,7 +7,7 @@
 | 项目 | 值 |
 |---|---|
 | 分支 | `cursor/sprint1-auth-gateway-p1-45f5` |
-| 部署提交 | `f31252e` |
+| 部署提交 | `0f3ebb9` |
 | Frontend | `http://47.239.90.234` |
 | API Gateway | `http://47.239.90.234` |
 | Auth Service | `http://47.239.90.234/api/auth/*` |
@@ -111,6 +111,7 @@ scripts/acceptance/sprint1_part1_remote_auth.sh
 - 修复 Auth Service Alembic 缺少 PostgreSQL 同步驱动问题。
 - 修复 API Gateway live monitor 配置字段兼容问题。
 - 前端 Nginx 改为 80 端口统一入口，并代理 `/api/*` 与 `/health` 到 API Gateway。
+- 修复前端构建参数默认指向 `:8000` 导致浏览器登录失败的问题；当前统一通过 `http://47.239.90.234` 访问前端和 API。
 
 ## 7. 剩余风险
 
