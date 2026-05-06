@@ -39,3 +39,10 @@ def test_token_hash_is_stable_and_not_plaintext():
     assert hashed == service.hash_token(token)
     assert hashed != token
     assert len(hashed) == 64
+
+
+def test_token_service_expires_at_uses_exp_claim():
+    service = TokenService()
+    token = service.create_refresh_token("u001")
+    payload = service.decode(token)
+    assert int(service.expires_at(payload).timestamp()) == payload["exp"]

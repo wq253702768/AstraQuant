@@ -17,3 +17,6 @@ class TokenService:
         return sha256(token.encode("utf-8")).hexdigest()
     def ttl_seconds(self, payload: dict) -> int:
         return max(0, int(payload.get("exp", 0)) - int(datetime.now(UTC).timestamp()))
+
+    def expires_at(self, payload: dict) -> datetime:
+        return datetime.fromtimestamp(int(payload["exp"]), UTC)
