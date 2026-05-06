@@ -1,0 +1,2 @@
+class ReplayEventResponse(dict):
+    pass

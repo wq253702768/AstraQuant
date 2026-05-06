@@ -1,0 +1,2 @@
+class ReplayCurveResponse(dict):
+    pass
