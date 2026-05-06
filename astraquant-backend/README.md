@@ -212,6 +212,17 @@ Sprint 15 新增交易所账户服务接口：
 - `GET /api/exchange-accounts/{id}/positions`
 - `GET /api/exchange-accounts/{id}/orders`
 
+Sprint 16 新增订单执行服务接口：
+
+- `GET /api/order-executor/orders`
+- `GET /api/order-executor/orders/{id}`
+- `GET /api/order-executor/trades`
+- `POST /api/order-executor/dry-run`
+- `POST /api/order-executor/orders/{id}/cancel`
+- `GET /api/order-executor/orders/{id}/logs`
+- `POST /api/order-executor/kill-switch/trigger`
+- `POST /api/order-executor/kill-switch/{id}/release`
+
 Sprint 2 新增策略服务接口：
 
 - `GET /api/strategy-templates`

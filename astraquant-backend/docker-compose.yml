@@ -485,6 +485,34 @@ services:
       - redis
       - nats
 
+  order-executor-service:
+    build:
+      context: .
+      dockerfile: services/order-executor-service/Dockerfile
+    container_name: astraquant-order-executor-service
+    environment:
+      SERVICE_NAME: order-executor-service
+      ENV: dev
+      HTTP_PORT: 8018
+      POSTGRES_DSN: postgres://astra:astra_password@postgres:5432/astraquant?sslmode=disable
+      REDIS_ADDR: redis:6379
+      NATS_URL: nats://nats:4222
+      OKX_PRIVATE_GATEWAY_URL: http://okx-private-account-gateway:8017
+      EXCHANGE_ACCOUNT_SERVICE_URL: http://exchange-account-service:8016
+      RISK_ENGINE_URL: http://risk-engine:8013
+      SIGNAL_ENGINE_URL: http://signal-engine:8009
+      PAPER_MONITOR_SERVICE_URL: http://paper-monitor-service:8015
+      LIVE_TRADING_ENABLED: "false"
+      ORDER_EXECUTION_MODE: DRY_RUN
+      LOG_LEVEL: INFO
+    ports:
+      - "8018:8018"
+    depends_on:
+      - redis
+      - nats
+      - okx-private-account-gateway
+      - exchange-account-service
+
   api-gateway:
     build:
       context: .
@@ -507,6 +535,7 @@ services:
       PAPER_TRADING_SERVICE_URL: http://paper-trading-service:8014
       PAPER_MONITOR_SERVICE_URL: http://paper-monitor-service:8015
       EXCHANGE_ACCOUNT_SERVICE_URL: http://exchange-account-service:8016
+      ORDER_EXECUTOR_SERVICE_URL: http://order-executor-service:8018
       REDIS_URL: redis://redis:6379/0
       JWT_SECRET: change_me
       LOG_LEVEL: INFO
@@ -527,6 +556,7 @@ services:
       - paper-trading-service
       - paper-monitor-service
       - exchange-account-service
+      - order-executor-service
 
 volumes:
   postgres_data:

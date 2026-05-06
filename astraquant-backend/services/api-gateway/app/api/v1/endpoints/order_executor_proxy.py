@@ -1,0 +1,20 @@
+from fastapi import APIRouter, Request
+from app.clients.order_executor_client import OrderExecutorClient
+from app.middleware.permissions import require_permission
+router=APIRouter(tags=["order-executor"])
+@router.get("/api/order-executor/orders")
+async def orders(request: Request): require_permission(request,"order_executor:read"); return await OrderExecutorClient().request("GET","/order-executor/orders",request,params=dict(request.query_params))
+@router.get("/api/order-executor/orders/{order_id}")
+async def order(order_id: str, request: Request): require_permission(request,"order_executor:read"); return await OrderExecutorClient().request("GET",f"/order-executor/orders/{order_id}",request)
+@router.get("/api/order-executor/trades")
+async def trades(request: Request): require_permission(request,"order_executor:read"); return await OrderExecutorClient().request("GET","/order-executor/trades",request,params=dict(request.query_params))
+@router.post("/api/order-executor/dry-run")
+async def dry_run(payload: dict, request: Request): require_permission(request,"order_executor:dry_run"); return await OrderExecutorClient().request("POST","/order-executor/dry-run",request,payload)
+@router.post("/api/order-executor/orders/{order_id}/cancel")
+async def cancel(order_id: str, payload: dict, request: Request): require_permission(request,"order_executor:manage"); return await OrderExecutorClient().request("POST",f"/order-executor/orders/{order_id}/cancel",request,payload)
+@router.get("/api/order-executor/orders/{order_id}/logs")
+async def logs(order_id: str, request: Request): require_permission(request,"order_executor:read"); return await OrderExecutorClient().request("GET",f"/order-executor/orders/{order_id}/logs",request)
+@router.post("/api/order-executor/kill-switch/trigger")
+async def trigger(payload: dict, request: Request): require_permission(request,"order_executor:kill_switch"); return await OrderExecutorClient().request("POST","/order-executor/kill-switch/trigger",request,payload)
+@router.post("/api/order-executor/kill-switch/{kill_switch_id}/release")
+async def release(kill_switch_id: str, payload: dict, request: Request): require_permission(request,"order_executor:kill_switch"); return await OrderExecutorClient().request("POST",f"/order-executor/kill-switch/{kill_switch_id}/release",request,payload)
