@@ -168,6 +168,34 @@ services:
       - strategy-service
       - market-data-service
 
+  replay-service:
+    build:
+      context: .
+      dockerfile: services/replay-service/Dockerfile
+    container_name: astraquant-replay-service
+    environment:
+      SERVICE_NAME: replay-service
+      ENV: dev
+      HTTP_PORT: 8005
+      DATABASE_URL: postgresql+asyncpg://astra:astra_password@postgres:5432/astraquant
+      CLICKHOUSE_HOST: clickhouse
+      CLICKHOUSE_PORT: 8123
+      CLICKHOUSE_USERNAME: default
+      CLICKHOUSE_PASSWORD: ""
+      CLICKHOUSE_DATABASE: astraquant
+      REDIS_URL: redis://redis:6379/0
+      NATS_URL: nats://nats:4222
+      BACKTEST_SERVICE_URL: http://backtest-service:8004
+      MARKET_DATA_SERVICE_URL: http://market-data-service:8003
+      LOG_LEVEL: INFO
+    ports:
+      - "8005:8005"
+    depends_on:
+      - postgres
+      - redis
+      - nats
+      - backtest-service
+
   api-gateway:
     build:
       context: .
@@ -180,6 +208,7 @@ services:
       STRATEGY_SERVICE_URL: http://strategy-service:8002
       MARKET_DATA_SERVICE_URL: http://market-data-service:8003
       BACKTEST_SERVICE_URL: http://backtest-service:8004
+      REPLAY_SERVICE_URL: http://replay-service:8005
       REDIS_URL: redis://redis:6379/0
       JWT_SECRET: change_me
       LOG_LEVEL: INFO
@@ -190,6 +219,7 @@ services:
       - strategy-service
       - market-data-service
       - backtest-service
+      - replay-service
 
 volumes:
   postgres_data:

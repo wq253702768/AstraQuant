@@ -1,0 +1,2 @@
+class ReplayExportResponse(dict):
+    pass

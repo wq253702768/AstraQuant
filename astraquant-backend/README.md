@@ -59,6 +59,13 @@ cd services/backtest-service
 uvicorn app.main:app --host 0.0.0.0 --port 8004
 ```
 
+启动 Replay Service：
+
+```bash
+cd services/replay-service
+uvicorn app.main:app --host 0.0.0.0 --port 8005
+```
+
 ## Sprint 1 接口
 
 - `GET /health`
@@ -110,6 +117,16 @@ Sprint 5 新增回测接口：
 - `GET /api/backtests/{id}/trades`
 - `GET /api/backtests/{id}/drawdowns`
 - `POST /api/backtests/{id}/cancel`
+
+Sprint 6 新增回放服务接口：
+
+- `POST /api/replays/build`
+- `GET /api/replays/build/{id}`
+- `GET /api/replays/{drawdown_id}/page`
+- `GET /api/replays/{drawdown_id}/events`
+- `GET /api/replays/{drawdown_id}/klines`
+- `GET /api/replays/{drawdown_id}/curves`
+- `GET /api/replays/{drawdown_id}/export`
 
 Sprint 2 新增策略服务接口：
 

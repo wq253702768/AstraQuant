@@ -1,0 +1,2 @@
+class ReplaySubscriber:
+    pass
