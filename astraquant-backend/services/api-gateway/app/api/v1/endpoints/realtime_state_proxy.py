@@ -1,0 +1,21 @@
+from fastapi import APIRouter, Request
+from app.clients.realtime_state_client import RealtimeStateClient
+from app.middleware.permissions import require_permission
+router=APIRouter(tags=["realtime-state"])
+def check(request): require_permission(request,"market_state:read")
+@router.get("/api/state/market/{exchange}/{symbol}")
+async def market(exchange: str, symbol: str, request: Request): check(request); return await RealtimeStateClient().request("GET",f"/api/v1/state/market/{exchange}/{symbol}",request)
+@router.get("/api/state/bbo/{exchange}/{symbol}")
+async def bbo(exchange: str, symbol: str, request: Request): check(request); return await RealtimeStateClient().request("GET",f"/api/v1/state/bbo/{exchange}/{symbol}",request)
+@router.get("/api/state/trade/{exchange}/{symbol}")
+async def trade(exchange: str, symbol: str, request: Request): check(request); return await RealtimeStateClient().request("GET",f"/api/v1/state/trade/{exchange}/{symbol}",request)
+@router.get("/api/state/kline/{exchange}/{symbol}")
+async def kline(exchange: str, symbol: str, request: Request): check(request); return await RealtimeStateClient().request("GET",f"/api/v1/state/kline/{exchange}/{symbol}",request,params=dict(request.query_params))
+@router.get("/api/state/mark-price/{exchange}/{symbol}")
+async def mark(exchange: str, symbol: str, request: Request): check(request); return await RealtimeStateClient().request("GET",f"/api/v1/state/mark-price/{exchange}/{symbol}",request)
+@router.get("/api/state/funding/{exchange}/{symbol}")
+async def funding(exchange: str, symbol: str, request: Request): check(request); return await RealtimeStateClient().request("GET",f"/api/v1/state/funding/{exchange}/{symbol}",request)
+@router.get("/api/state/snapshot/{exchange}/{symbol}")
+async def snapshot(exchange: str, symbol: str, request: Request): check(request); return await RealtimeStateClient().request("GET",f"/api/v1/state/snapshot/{exchange}/{symbol}",request)
+@router.get("/api/state/freshness/{exchange}/{symbol}")
+async def freshness(exchange: str, symbol: str, request: Request): check(request); return await RealtimeStateClient().request("GET",f"/api/v1/state/freshness/{exchange}/{symbol}",request)

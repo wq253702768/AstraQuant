@@ -13,6 +13,7 @@ class Settings:
     ai_analysis_service_url: str = os.getenv("AI_ANALYSIS_SERVICE_URL", "http://localhost:8006")
     strategy_score_service_url: str = os.getenv("STRATEGY_SCORE_SERVICE_URL", "http://localhost:8007")
     report_service_url: str = os.getenv("REPORT_SERVICE_URL", "http://localhost:8008")
+    realtime_state_service_url: str = os.getenv("REALTIME_STATE_SERVICE_URL", "http://localhost:8012")
     redis_url: str = os.getenv("REDIS_URL", "redis://localhost:6379/0")
     jwt_secret: str = os.getenv("JWT_SECRET", "change_me")
     log_level: str = os.getenv("LOG_LEVEL", "INFO")

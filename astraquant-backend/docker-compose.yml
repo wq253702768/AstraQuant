@@ -309,6 +309,28 @@ services:
       - redis
       - exchange-access-gateway
 
+  realtime-state-service:
+    build:
+      context: .
+      dockerfile: services/realtime-state-service/Dockerfile
+    container_name: astraquant-realtime-state-service
+    environment:
+      SERVICE_NAME: realtime-state-service
+      ENV: dev
+      HTTP_PORT: 8012
+      NATS_URL: nats://nats:4222
+      REDIS_ADDR: redis:6379
+      DEFAULT_EXCHANGE: OKX
+      DEFAULT_SYMBOLS: BTC-USDT-SWAP,ETH-USDT-SWAP
+      DEFAULT_TIMEFRAMES: 1m,5m
+      LOG_LEVEL: INFO
+    ports:
+      - "8012:8012"
+    depends_on:
+      - nats
+      - redis
+      - realtime-market-gateway
+
   api-gateway:
     build:
       context: .
@@ -325,6 +347,7 @@ services:
       AI_ANALYSIS_SERVICE_URL: http://ai-analysis-service:8006
       STRATEGY_SCORE_SERVICE_URL: http://strategy-score-service:8007
       REPORT_SERVICE_URL: http://report-service:8008
+      REALTIME_STATE_SERVICE_URL: http://realtime-state-service:8012
       REDIS_URL: redis://redis:6379/0
       JWT_SECRET: change_me
       LOG_LEVEL: INFO
@@ -339,6 +362,7 @@ services:
       - ai-analysis-service
       - strategy-score-service
       - report-service
+      - realtime-state-service
 
 volumes:
   postgres_data:
