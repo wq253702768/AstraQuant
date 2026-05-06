@@ -36,6 +36,13 @@ cd services/api-gateway
 uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
+启动 Strategy Service：
+
+```bash
+cd services/strategy-service
+uvicorn app.main:app --host 0.0.0.0 --port 8002
+```
+
 ## Sprint 1 接口
 
 - `GET /health`
@@ -44,6 +51,16 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 - `GET /api/dashboard/overview`
 - `WS /api/ws/tasks`
 - `WS /api/ws/realtime`
+
+Sprint 2 新增策略服务接口：
+
+- `GET /api/strategy-templates`
+- `POST /api/strategies`
+- `GET /api/strategies`
+- `GET /api/strategies/{id}`
+- `POST /api/strategies/{id}/versions`
+- `PUT /api/strategy-versions/{id}/params`
+- `POST /api/strategy-versions/{id}/submit-backtest`
 
 默认管理员账号：
 
