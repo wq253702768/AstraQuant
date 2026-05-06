@@ -56,6 +56,8 @@ PERMISSION_NAMES = {
     "order_executor:dry_run": "订单执行Dry Run",
     "order_executor:manage": "管理订单执行",
     "order_executor:kill_switch": "管理订单熔断",
+    "live_risk:read": "查看实盘风险",
+    "live_risk:emergency": "实盘紧急控制",
 }
 
 async def main() -> None:

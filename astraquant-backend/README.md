@@ -223,6 +223,15 @@ Sprint 16 新增订单执行服务接口：
 - `POST /api/order-executor/kill-switch/trigger`
 - `POST /api/order-executor/kill-switch/{id}/release`
 
+Sprint 17 新增实盘安全控制接口：
+
+- `GET /api/live-risk/states`
+- `GET /api/live-risk/circuit-breakers`
+- `GET /api/live-risk/circuit-breakers/{id}`
+- `POST /api/live-risk/emergency-controls/trigger`
+- `POST /api/live-risk/emergency-controls/{id}/release`
+- `GET /api/live-risk/rules`
+
 Sprint 2 新增策略服务接口：
 
 - `GET /api/strategy-templates`

@@ -513,6 +513,27 @@ services:
       - okx-private-account-gateway
       - exchange-account-service
 
+  live-risk-guard-service:
+    build:
+      context: .
+      dockerfile: services/live-risk-guard-service/Dockerfile
+    container_name: astraquant-live-risk-guard-service
+    environment:
+      SERVICE_NAME: live-risk-guard-service
+      ENV: dev
+      HTTP_PORT: 8019
+      POSTGRES_DSN: postgres://astra:astra_password@postgres:5432/astraquant?sslmode=disable
+      REDIS_ADDR: redis:6379
+      NATS_URL: nats://nats:4222
+      ORDER_EXECUTOR_SERVICE_URL: http://order-executor-service:8018
+      LOG_LEVEL: INFO
+    ports:
+      - "8019:8019"
+    depends_on:
+      - redis
+      - nats
+      - order-executor-service
+
   api-gateway:
     build:
       context: .
@@ -536,6 +557,7 @@ services:
       PAPER_MONITOR_SERVICE_URL: http://paper-monitor-service:8015
       EXCHANGE_ACCOUNT_SERVICE_URL: http://exchange-account-service:8016
       ORDER_EXECUTOR_SERVICE_URL: http://order-executor-service:8018
+      LIVE_RISK_GUARD_SERVICE_URL: http://live-risk-guard-service:8019
       REDIS_URL: redis://redis:6379/0
       JWT_SECRET: change_me
       LOG_LEVEL: INFO
@@ -557,6 +579,7 @@ services:
       - paper-monitor-service
       - exchange-account-service
       - order-executor-service
+      - live-risk-guard-service
 
 volumes:
   postgres_data:
