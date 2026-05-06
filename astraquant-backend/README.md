@@ -145,6 +145,14 @@ Sprint 8 新增评分与报告接口：
 - `GET /api/reports/tasks/{id}`
 - `GET /api/reports/tasks/{id}/files`
 
+Sprint 9 新增实时行情网关：
+
+- `GET /health` on `services/realtime-market-gateway` port `8011`
+- `GET /api/v1/runtime/status`
+- `GET /api/v1/subscriptions`
+- `POST /api/v1/subscriptions`
+- `DELETE /api/v1/subscriptions`
+
 Sprint 2 新增策略服务接口：
 
 - `GET /api/strategy-templates`
