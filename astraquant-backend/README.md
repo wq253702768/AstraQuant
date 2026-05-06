@@ -153,6 +153,17 @@ Sprint 9 新增实时行情网关：
 - `POST /api/v1/subscriptions`
 - `DELETE /api/v1/subscriptions`
 
+Sprint 10 新增实时状态服务：
+
+- `GET /api/state/market/{exchange}/{symbol}`
+- `GET /api/state/bbo/{exchange}/{symbol}`
+- `GET /api/state/trade/{exchange}/{symbol}`
+- `GET /api/state/kline/{exchange}/{symbol}`
+- `GET /api/state/mark-price/{exchange}/{symbol}`
+- `GET /api/state/funding/{exchange}/{symbol}`
+- `GET /api/state/snapshot/{exchange}/{symbol}`
+- `GET /api/state/freshness/{exchange}/{symbol}`
+
 Sprint 2 新增策略服务接口：
 
 - `GET /api/strategy-templates`
