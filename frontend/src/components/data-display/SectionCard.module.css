@@ -8,7 +8,7 @@
   box-shadow: var(--aq-shadow);
 }
 
-.head {
+.header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -16,7 +16,8 @@
   margin-bottom: 14px;
 }
 
-.title {
+.header h3 {
+  margin: 0;
   color: var(--aq-text);
   font-size: 16px;
   font-weight: 700;
