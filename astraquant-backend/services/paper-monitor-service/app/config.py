@@ -1,0 +1,23 @@
+import os
+from decimal import Decimal
+class Settings:
+    service_name = os.getenv("SERVICE_NAME", "paper-monitor-service")
+    env = os.getenv("ENV", "dev")
+    http_port = int(os.getenv("HTTP_PORT", "8015"))
+    database_url = os.getenv("DATABASE_URL", "postgresql+asyncpg://astra:astra_password@localhost:5432/astraquant")
+    redis_url = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+    nats_url = os.getenv("NATS_URL", "nats://localhost:4222")
+    paper_trading_service_url = os.getenv("PAPER_TRADING_SERVICE_URL", "http://localhost:8014")
+    risk_engine_url = os.getenv("RISK_ENGINE_URL", "http://localhost:8013")
+    signal_engine_url = os.getenv("SIGNAL_ENGINE_URL", "http://localhost:8009")
+    strategy_score_service_url = os.getenv("STRATEGY_SCORE_SERVICE_URL", "http://localhost:8007")
+    report_service_url = os.getenv("REPORT_SERVICE_URL", "http://localhost:8008")
+    min_observation_days = int(os.getenv("DEFAULT_MIN_OBSERVATION_DAYS", "7"))
+    min_trade_count = int(os.getenv("DEFAULT_MIN_TRADE_COUNT", "20"))
+    max_drawdown_pct = Decimal(os.getenv("DEFAULT_MAX_DRAWDOWN_PCT", "0.05"))
+    max_consecutive_losses = int(os.getenv("DEFAULT_MAX_CONSECUTIVE_LOSSES", "3"))
+    max_cost_to_profit_ratio = Decimal(os.getenv("DEFAULT_MAX_COST_TO_PROFIT_RATIO", "0.25"))
+    max_data_stale_count = int(os.getenv("DEFAULT_MAX_DATA_STALE_COUNT", "10"))
+    max_order_error_count = int(os.getenv("DEFAULT_MAX_ORDER_ERROR_COUNT", "0"))
+    log_level = os.getenv("LOG_LEVEL", "INFO")
+settings = Settings()

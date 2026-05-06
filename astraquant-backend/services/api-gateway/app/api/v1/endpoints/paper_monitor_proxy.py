@@ -1,0 +1,20 @@
+from fastapi import APIRouter, Request
+from app.clients.paper_monitor_client import PaperMonitorClient
+from app.middleware.permissions import require_permission
+router=APIRouter(tags=["paper-monitor"])
+@router.post("/api/paper-monitor/observations")
+async def create(payload: dict, request: Request): require_permission(request,"paper_monitor:manage"); return await PaperMonitorClient().request("POST","/paper-monitor/observations",request,payload)
+@router.get("/api/paper-monitor/observations/{observation_id}")
+async def obs(observation_id: str, request: Request): require_permission(request,"paper_monitor:read"); return await PaperMonitorClient().request("GET",f"/paper-monitor/observations/{observation_id}",request)
+@router.get("/api/paper-monitor/dashboard/overview")
+async def overview(request: Request): require_permission(request,"paper_monitor:read"); return await PaperMonitorClient().request("GET","/paper-monitor/dashboard/overview",request,params=dict(request.query_params))
+@router.get("/api/paper-monitor/equity-curve")
+async def equity(request: Request): require_permission(request,"paper_monitor:read"); return await PaperMonitorClient().request("GET","/paper-monitor/equity-curve",request,params=dict(request.query_params))
+@router.get("/api/paper-monitor/strategies/{strategy_version_id}/daily-summary")
+async def summary(strategy_version_id: str, request: Request): require_permission(request,"paper_monitor:read"); return await PaperMonitorClient().request("GET",f"/paper-monitor/strategies/{strategy_version_id}/daily-summary",request)
+@router.post("/api/paper-monitor/observations/{observation_id}/admission/calculate")
+async def admission(observation_id: str, request: Request): require_permission(request,"paper_monitor:manage"); return await PaperMonitorClient().request("POST",f"/paper-monitor/observations/{observation_id}/admission/calculate",request)
+@router.get("/api/paper-monitor/admission-results/{result_id}")
+async def admission_result(result_id: str, request: Request): require_permission(request,"paper_monitor:read"); return await PaperMonitorClient().request("GET",f"/paper-monitor/admission-results/{result_id}",request)
+@router.get("/api/paper-monitor/daily-reports")
+async def reports(request: Request): require_permission(request,"paper_monitor:read"); return await PaperMonitorClient().request("GET","/paper-monitor/daily-reports",request,params=dict(request.query_params))

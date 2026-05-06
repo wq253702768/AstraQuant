@@ -417,6 +417,32 @@ services:
       - risk-engine
       - signal-engine
 
+  paper-monitor-service:
+    build:
+      context: .
+      dockerfile: services/paper-monitor-service/Dockerfile
+    container_name: astraquant-paper-monitor-service
+    environment:
+      SERVICE_NAME: paper-monitor-service
+      ENV: dev
+      HTTP_PORT: 8015
+      DATABASE_URL: postgresql+asyncpg://astra:astra_password@postgres:5432/astraquant
+      REDIS_URL: redis://redis:6379/0
+      NATS_URL: nats://nats:4222
+      PAPER_TRADING_SERVICE_URL: http://paper-trading-service:8014
+      RISK_ENGINE_URL: http://risk-engine:8013
+      SIGNAL_ENGINE_URL: http://signal-engine:8009
+      STRATEGY_SCORE_SERVICE_URL: http://strategy-score-service:8007
+      REPORT_SERVICE_URL: http://report-service:8008
+      LOG_LEVEL: INFO
+    ports:
+      - "8015:8015"
+    depends_on:
+      - postgres
+      - redis
+      - nats
+      - paper-trading-service
+
   api-gateway:
     build:
       context: .
@@ -437,6 +463,7 @@ services:
       SIGNAL_ENGINE_URL: http://signal-engine:8009
       RISK_ENGINE_URL: http://risk-engine:8013
       PAPER_TRADING_SERVICE_URL: http://paper-trading-service:8014
+      PAPER_MONITOR_SERVICE_URL: http://paper-monitor-service:8015
       REDIS_URL: redis://redis:6379/0
       JWT_SECRET: change_me
       LOG_LEVEL: INFO
@@ -455,6 +482,7 @@ services:
       - signal-engine
       - risk-engine
       - paper-trading-service
+      - paper-monitor-service
 
 volumes:
   postgres_data:

@@ -189,6 +189,17 @@ Sprint 13 新增模拟盘交易接口：
 - `GET /api/paper-trading/trades`
 - `GET /api/paper-trading/performance/strategies/{id}`
 
+Sprint 14 新增模拟盘监控服务接口：
+
+- `POST /api/paper-monitor/observations`
+- `GET /api/paper-monitor/observations/{id}`
+- `GET /api/paper-monitor/dashboard/overview`
+- `GET /api/paper-monitor/equity-curve`
+- `GET /api/paper-monitor/strategies/{id}/daily-summary`
+- `POST /api/paper-monitor/observations/{id}/admission/calculate`
+- `GET /api/paper-monitor/admission-results/{id}`
+- `GET /api/paper-monitor/daily-reports`
+
 Sprint 2 新增策略服务接口：
 
 - `GET /api/strategy-templates`
