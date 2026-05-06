@@ -13,15 +13,11 @@ async def refresh(payload: dict, request: Request):
 
 @router.post("/logout")
 async def logout(payload: dict, request: Request):
-    authorization = request.headers.get("Authorization", "")
-    token = authorization.removeprefix("Bearer ").strip()
-    return await AuthClient().logout(payload, token, request)
+    return await AuthClient().logout(payload, request)
 
 @router.put("/password")
 async def change_password(payload: dict, request: Request):
-    authorization = request.headers.get("Authorization", "")
-    token = authorization.removeprefix("Bearer ").strip()
-    return await AuthClient().change_password(payload, token, request)
+    return await AuthClient().change_password(payload, request)
 
 @router.get("/me")
 async def me(request: Request):
