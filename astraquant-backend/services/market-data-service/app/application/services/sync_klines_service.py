@@ -1,0 +1,2 @@
+class SyncKlinesService:
+    pass

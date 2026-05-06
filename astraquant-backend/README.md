@@ -18,6 +18,8 @@ docker compose up -d postgres redis nats minio
 pip install -e shared/python
 pip install -e services/auth-service
 pip install -e services/api-gateway
+pip install -e services/strategy-service
+pip install -e services/market-data-service
 ./scripts/migrate_all.sh
 PYTHONPATH=shared/python:services/auth-service python scripts/create_admin_user.py
 ```
@@ -41,6 +43,13 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```bash
 cd services/strategy-service
 uvicorn app.main:app --host 0.0.0.0 --port 8002
+```
+
+启动 Market Data Service：
+
+```bash
+cd services/market-data-service
+uvicorn app.main:app --host 0.0.0.0 --port 8003
 ```
 
 ## Sprint 1 接口
@@ -71,6 +80,20 @@ go run ./cmd/server
 - `GET /api/v1/exchanges/OKX/funding-rate?symbol=BTC-USDT-SWAP`
 - `GET /api/v1/exchanges/OKX/funding-rate-history?symbol=BTC-USDT-SWAP&limit=100`
 - `GET /api/v1/exchanges/OKX/mark-price?symbol=BTC-USDT-SWAP`
+
+## Sprint 4 Market Data Service
+
+Market Data Service 位于 `services/market-data-service/`，默认监听 `8003`。
+
+常用接口：
+
+- `POST /api/market-data/sync`
+- `GET /api/market-data/sync/{id}`
+- `GET /api/market-data/instruments`
+- `GET /api/market-data/klines`
+- `GET /api/market-data/funding-rates`
+- `GET /api/market-data/mark-prices`
+- `GET /api/market-data/quality`
 
 Sprint 2 新增策略服务接口：
 

@@ -1,0 +1,27 @@
+[project]
+name = "astra-market-data-service"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+  "astra-common",
+  "fastapi",
+  "uvicorn[standard]",
+  "sqlalchemy[asyncio]",
+  "asyncpg",
+  "alembic",
+  "pydantic",
+  "httpx",
+  "clickhouse-connect",
+  "celery",
+  "redis",
+]
+
+[project.optional-dependencies]
+test = ["pytest", "pytest-asyncio", "httpx"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["app*"]

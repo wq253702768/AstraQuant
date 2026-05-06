@@ -112,6 +112,33 @@ services:
       - redis
       - nats
 
+  market-data-service:
+    build:
+      context: .
+      dockerfile: services/market-data-service/Dockerfile
+    container_name: astraquant-market-data-service
+    environment:
+      SERVICE_NAME: market-data-service
+      ENV: dev
+      HTTP_PORT: 8003
+      DATABASE_URL: postgresql+asyncpg://astra:astra_password@postgres:5432/astraquant
+      CLICKHOUSE_HOST: clickhouse
+      CLICKHOUSE_PORT: 8123
+      CLICKHOUSE_USERNAME: default
+      CLICKHOUSE_PASSWORD: ""
+      CLICKHOUSE_DATABASE: astraquant
+      REDIS_URL: redis://redis:6379/0
+      NATS_URL: nats://nats:4222
+      EXCHANGE_GATEWAY_URL: http://exchange-access-gateway:8010
+      LOG_LEVEL: INFO
+    ports:
+      - "8003:8003"
+    depends_on:
+      - postgres
+      - redis
+      - nats
+      - exchange-access-gateway
+
   api-gateway:
     build:
       context: .
@@ -122,6 +149,7 @@ services:
       ENV: dev
       AUTH_SERVICE_URL: http://auth-service:8001
       STRATEGY_SERVICE_URL: http://strategy-service:8002
+      MARKET_DATA_SERVICE_URL: http://market-data-service:8003
       REDIS_URL: redis://redis:6379/0
       JWT_SECRET: change_me
       LOG_LEVEL: INFO
@@ -130,6 +158,7 @@ services:
     depends_on:
       - auth-service
       - strategy-service
+      - market-data-service
 
 volumes:
   postgres_data:

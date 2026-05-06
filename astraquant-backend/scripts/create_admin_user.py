@@ -36,6 +36,8 @@ PERMISSION_NAMES = {
     "trade:approve_live": "批准实盘",
     "risk:manage": "管理风控",
     "audit:read": "查看审计",
+    "market_data:sync": "同步行情数据",
+    "market_data:read": "查看行情数据",
 }
 
 async def main() -> None:
