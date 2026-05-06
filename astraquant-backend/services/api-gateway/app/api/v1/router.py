@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1.endpoints import ai_proxy, auth_proxy, backtest_proxy, dashboard, exchange_account_proxy, market_data_proxy, order_executor_proxy, paper_monitor_proxy, paper_trading_proxy, realtime_state_proxy, realtime_ws, replay_proxy, report_proxy, risk_proxy, signal_proxy, strategy_proxy, strategy_score_proxy, task_ws
+from app.api.v1.endpoints import ai_proxy, auth_proxy, backtest_proxy, dashboard, exchange_account_proxy, live_risk_proxy, market_data_proxy, order_executor_proxy, paper_monitor_proxy, paper_trading_proxy, realtime_state_proxy, realtime_ws, replay_proxy, report_proxy, risk_proxy, signal_proxy, strategy_proxy, strategy_score_proxy, task_ws
 
 api_router = APIRouter()
 api_router.include_router(auth_proxy.router)
@@ -18,5 +18,6 @@ api_router.include_router(paper_trading_proxy.router)
 api_router.include_router(paper_monitor_proxy.router)
 api_router.include_router(exchange_account_proxy.router)
 api_router.include_router(order_executor_proxy.router)
+api_router.include_router(live_risk_proxy.router)
 api_router.include_router(task_ws.router)
 api_router.include_router(realtime_ws.router)
