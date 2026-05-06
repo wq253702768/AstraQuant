@@ -1,0 +1,2 @@
+class DrawdownListResponse(dict):
+    pass

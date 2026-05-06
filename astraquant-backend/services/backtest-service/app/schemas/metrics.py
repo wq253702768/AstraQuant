@@ -1,0 +1,2 @@
+class MetricsResponse(dict):
+    pass

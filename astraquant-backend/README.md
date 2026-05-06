@@ -52,6 +52,13 @@ cd services/market-data-service
 uvicorn app.main:app --host 0.0.0.0 --port 8003
 ```
 
+启动 Backtest Service：
+
+```bash
+cd services/backtest-service
+uvicorn app.main:app --host 0.0.0.0 --port 8004
+```
+
 ## Sprint 1 接口
 
 - `GET /health`
@@ -94,6 +101,15 @@ Market Data Service 位于 `services/market-data-service/`，默认监听 `8003`
 - `GET /api/market-data/funding-rates`
 - `GET /api/market-data/mark-prices`
 - `GET /api/market-data/quality`
+
+Sprint 5 新增回测接口：
+
+- `POST /api/backtests`
+- `GET /api/backtests/{id}/status`
+- `GET /api/backtests/{id}/summary`
+- `GET /api/backtests/{id}/trades`
+- `GET /api/backtests/{id}/drawdowns`
+- `POST /api/backtests/{id}/cancel`
 
 Sprint 2 新增策略服务接口：
 
