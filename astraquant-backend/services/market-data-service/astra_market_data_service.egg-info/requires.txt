@@ -1,0 +1,16 @@
+astra-common
+fastapi
+uvicorn[standard]
+sqlalchemy[asyncio]
+asyncpg
+alembic
+pydantic
+httpx
+clickhouse-connect
+celery
+redis
+
+[test]
+pytest
+pytest-asyncio
+httpx

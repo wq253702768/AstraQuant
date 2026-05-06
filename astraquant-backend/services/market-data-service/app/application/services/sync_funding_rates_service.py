@@ -1,0 +1,2 @@
+class SyncFundingRatesService:
+    pass

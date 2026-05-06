@@ -25,3 +25,9 @@ def test_missing_permission_rejected():
         assert exc.code == "FORBIDDEN"
     else:
         raise AssertionError("permission should be rejected")
+
+
+def test_market_data_permission_allows():
+    request = FakeRequest()
+    request.state.user = {"permissions": ["market_data:read"]}
+    require_permission(request, "market_data:read")
