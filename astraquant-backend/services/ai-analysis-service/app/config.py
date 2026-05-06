@@ -1,0 +1,25 @@
+from dataclasses import dataclass
+import os
+
+@dataclass(frozen=True)
+class Settings:
+    service_name: str = os.getenv("SERVICE_NAME", "ai-analysis-service")
+    env: str = os.getenv("ENV", "dev")
+    http_port: int = int(os.getenv("HTTP_PORT", "8006"))
+    database_url: str = os.getenv("DATABASE_URL", "postgresql+asyncpg://astra:astra_password@localhost:5432/astraquant")
+    clickhouse_host: str = os.getenv("CLICKHOUSE_HOST", "localhost")
+    clickhouse_port: int = int(os.getenv("CLICKHOUSE_PORT", "8123"))
+    clickhouse_username: str = os.getenv("CLICKHOUSE_USERNAME", "default")
+    clickhouse_password: str = os.getenv("CLICKHOUSE_PASSWORD", "")
+    clickhouse_database: str = os.getenv("CLICKHOUSE_DATABASE", "astraquant")
+    redis_url: str = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+    nats_url: str = os.getenv("NATS_URL", "nats://localhost:4222")
+    backtest_service_url: str = os.getenv("BACKTEST_SERVICE_URL", "http://localhost:8004")
+    replay_service_url: str = os.getenv("REPLAY_SERVICE_URL", "http://localhost:8005")
+    openai_api_key: str = os.getenv("OPENAI_API_KEY", "")
+    openai_model_name: str = os.getenv("OPENAI_MODEL_NAME", "gpt-5.5-thinking")
+    openai_model_version: str = os.getenv("OPENAI_MODEL_VERSION", "2026-05")
+    openai_temperature: float = float(os.getenv("OPENAI_TEMPERATURE", "0.2"))
+    log_level: str = os.getenv("LOG_LEVEL", "INFO")
+
+settings = Settings()

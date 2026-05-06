@@ -196,6 +196,38 @@ services:
       - nats
       - backtest-service
 
+  ai-analysis-service:
+    build:
+      context: .
+      dockerfile: services/ai-analysis-service/Dockerfile
+    container_name: astraquant-ai-analysis-service
+    environment:
+      SERVICE_NAME: ai-analysis-service
+      ENV: dev
+      HTTP_PORT: 8006
+      DATABASE_URL: postgresql+asyncpg://astra:astra_password@postgres:5432/astraquant
+      CLICKHOUSE_HOST: clickhouse
+      CLICKHOUSE_PORT: 8123
+      CLICKHOUSE_USERNAME: default
+      CLICKHOUSE_PASSWORD: ""
+      CLICKHOUSE_DATABASE: astraquant
+      REDIS_URL: redis://redis:6379/0
+      NATS_URL: nats://nats:4222
+      BACKTEST_SERVICE_URL: http://backtest-service:8004
+      REPLAY_SERVICE_URL: http://replay-service:8005
+      OPENAI_MODEL_NAME: gpt-5.5-thinking
+      OPENAI_MODEL_VERSION: "2026-05"
+      OPENAI_TEMPERATURE: "0.2"
+      LOG_LEVEL: INFO
+    ports:
+      - "8006:8006"
+    depends_on:
+      - postgres
+      - redis
+      - nats
+      - backtest-service
+      - replay-service
+
   api-gateway:
     build:
       context: .
@@ -209,6 +241,7 @@ services:
       MARKET_DATA_SERVICE_URL: http://market-data-service:8003
       BACKTEST_SERVICE_URL: http://backtest-service:8004
       REPLAY_SERVICE_URL: http://replay-service:8005
+      AI_ANALYSIS_SERVICE_URL: http://ai-analysis-service:8006
       REDIS_URL: redis://redis:6379/0
       JWT_SECRET: change_me
       LOG_LEVEL: INFO
@@ -220,6 +253,7 @@ services:
       - market-data-service
       - backtest-service
       - replay-service
+      - ai-analysis-service
 
 volumes:
   postgres_data:

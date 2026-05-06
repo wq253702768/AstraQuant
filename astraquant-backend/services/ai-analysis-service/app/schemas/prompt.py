@@ -1,0 +1,2 @@
+class PromptResponse(dict):
+    pass

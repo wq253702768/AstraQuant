@@ -128,6 +128,14 @@ Sprint 6 新增回放服务接口：
 - `GET /api/replays/{drawdown_id}/curves`
 - `GET /api/replays/{drawdown_id}/export`
 
+Sprint 7 新增 AI 分析服务接口：
+
+- `POST /api/ai/backtest-analysis`
+- `GET /api/ai/tasks/{id}/status`
+- `GET /api/ai/tasks/{id}/result`
+- `GET /api/ai/tasks/{id}/model-calls`
+- `GET /api/ai/prompts`
+
 Sprint 2 新增策略服务接口：
 
 - `GET /api/strategy-templates`

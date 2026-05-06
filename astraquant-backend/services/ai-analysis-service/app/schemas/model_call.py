@@ -1,0 +1,2 @@
+class ModelCallResponse(dict):
+    pass
