@@ -60,7 +60,7 @@ reset_password_directly() {
     return 1
   fi
   ssh -i "$ASTRA_STAGING_SSH_KEY" "$ASTRA_STAGING_USER@$ASTRA_STAGING_HOST" \
-    "export ASTRA_TEST_USERNAME='$USERNAME' ASTRA_TEST_PASSWORD='$OLD_PASSWORD'; cd /opt/astraquant/app/astraquant-backend && docker compose --env-file /opt/astraquant/env/.env.staging -f deploy/staging/docker-compose.sprint1-part1.yml run --rm -v /opt/astraquant/app/astraquant-backend/scripts:/scripts:ro auth-service python - <<'PY'
+    "export ASTRA_TEST_USERNAME='$USERNAME' ASTRA_TEST_PASSWORD='$OLD_PASSWORD'; cd /opt/astraquant/app/astraquant-backend && docker compose --env-file /opt/astraquant/env/.env.staging -f deploy/staging/docker-compose.sprint1-part1.yml run --rm -e ASTRA_TEST_USERNAME -e ASTRA_TEST_PASSWORD -v /opt/astraquant/app/astraquant-backend/scripts:/scripts:ro auth-service python - <<'PY'
 import asyncio
 import os
 from astra_common.security import hash_password
