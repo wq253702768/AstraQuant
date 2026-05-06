@@ -228,6 +228,63 @@ services:
       - backtest-service
       - replay-service
 
+  strategy-score-service:
+    build:
+      context: .
+      dockerfile: services/strategy-score-service/Dockerfile
+    container_name: astraquant-strategy-score-service
+    environment:
+      SERVICE_NAME: strategy-score-service
+      ENV: dev
+      HTTP_PORT: 8007
+      DATABASE_URL: postgresql+asyncpg://astra:astra_password@postgres:5432/astraquant
+      REDIS_URL: redis://redis:6379/0
+      NATS_URL: nats://nats:4222
+      BACKTEST_SERVICE_URL: http://backtest-service:8004
+      AI_ANALYSIS_SERVICE_URL: http://ai-analysis-service:8006
+      STRATEGY_SERVICE_URL: http://strategy-service:8002
+      LOG_LEVEL: INFO
+    ports:
+      - "8007:8007"
+    depends_on:
+      - postgres
+      - redis
+      - nats
+      - backtest-service
+      - ai-analysis-service
+
+  report-service:
+    build:
+      context: .
+      dockerfile: services/report-service/Dockerfile
+    container_name: astraquant-report-service
+    environment:
+      SERVICE_NAME: report-service
+      ENV: dev
+      HTTP_PORT: 8008
+      DATABASE_URL: postgresql+asyncpg://astra:astra_password@postgres:5432/astraquant
+      REDIS_URL: redis://redis:6379/0
+      NATS_URL: nats://nats:4222
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio_password
+      MINIO_SECURE: "false"
+      BACKTEST_SERVICE_URL: http://backtest-service:8004
+      AI_ANALYSIS_SERVICE_URL: http://ai-analysis-service:8006
+      STRATEGY_SCORE_SERVICE_URL: http://strategy-score-service:8007
+      REPLAY_SERVICE_URL: http://replay-service:8005
+      LOG_LEVEL: INFO
+    ports:
+      - "8008:8008"
+    depends_on:
+      - postgres
+      - redis
+      - nats
+      - minio
+      - backtest-service
+      - ai-analysis-service
+      - strategy-score-service
+
   api-gateway:
     build:
       context: .
@@ -242,6 +299,8 @@ services:
       BACKTEST_SERVICE_URL: http://backtest-service:8004
       REPLAY_SERVICE_URL: http://replay-service:8005
       AI_ANALYSIS_SERVICE_URL: http://ai-analysis-service:8006
+      STRATEGY_SCORE_SERVICE_URL: http://strategy-score-service:8007
+      REPORT_SERVICE_URL: http://report-service:8008
       REDIS_URL: redis://redis:6379/0
       JWT_SECRET: change_me
       LOG_LEVEL: INFO
@@ -254,6 +313,8 @@ services:
       - backtest-service
       - replay-service
       - ai-analysis-service
+      - strategy-score-service
+      - report-service
 
 volumes:
   postgres_data:
