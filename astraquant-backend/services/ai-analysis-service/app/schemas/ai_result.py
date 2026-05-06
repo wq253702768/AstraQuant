@@ -1,0 +1,2 @@
+class AIResultResponse(dict):
+    pass
