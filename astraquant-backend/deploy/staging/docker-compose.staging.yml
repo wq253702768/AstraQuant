@@ -131,6 +131,8 @@ services:
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
     ports:
       - "${API_GATEWAY_PORT:-8000}:8000"
+    depends_on:
+      - auth-service
 
   frontend-web:
     build:
