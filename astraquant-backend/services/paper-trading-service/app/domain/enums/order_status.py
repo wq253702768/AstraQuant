@@ -1,0 +1,10 @@
+from enum import StrEnum
+class OrderStatus(StrEnum):
+    CREATED = "CREATED"
+    MATCHING = "MATCHING"
+    FILLED = "FILLED"
+    PARTIALLY_FILLED = "PARTIALLY_FILLED"
+    REJECTED = "REJECTED"
+    CANCELED = "CANCELED"
+    EXPIRED = "EXPIRED"
+    FAILED = "FAILED"

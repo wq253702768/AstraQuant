@@ -45,6 +45,8 @@ PERMISSION_NAMES = {
     "signal:manage": "管理信号运行",
     "risk:read": "查看风控决策",
     "risk:manage": "管理风控",
+    "paper_trading:read": "查看模拟盘",
+    "paper_trading:manage": "管理模拟盘",
 }
 
 async def main() -> None:

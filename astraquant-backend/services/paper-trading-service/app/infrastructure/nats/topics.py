@@ -1,0 +1,5 @@
+PAPER_ORDER_CREATED="paper.order.created"
+PAPER_ORDER_FILLED="paper.order.filled"
+PAPER_POSITION_UPDATED="paper.position.updated"
+PAPER_ACCOUNT_UPDATED="paper.account.updated"
+AUDIT_EVENT="audit.event"

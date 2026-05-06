@@ -390,6 +390,33 @@ services:
       - realtime-state-service
       - signal-engine
 
+  paper-trading-service:
+    build:
+      context: .
+      dockerfile: services/paper-trading-service/Dockerfile
+    container_name: astraquant-paper-trading-service
+    environment:
+      SERVICE_NAME: paper-trading-service
+      ENV: dev
+      HTTP_PORT: 8014
+      DATABASE_URL: postgresql+asyncpg://astra:astra_password@postgres:5432/astraquant
+      REDIS_URL: redis://redis:6379/0
+      NATS_URL: nats://nats:4222
+      REALTIME_STATE_SERVICE_URL: http://realtime-state-service:8012
+      RISK_ENGINE_URL: http://risk-engine:8013
+      SIGNAL_ENGINE_URL: http://signal-engine:8009
+      STRATEGY_SERVICE_URL: http://strategy-service:8002
+      LOG_LEVEL: INFO
+    ports:
+      - "8014:8014"
+    depends_on:
+      - postgres
+      - redis
+      - nats
+      - realtime-state-service
+      - risk-engine
+      - signal-engine
+
   api-gateway:
     build:
       context: .
@@ -409,6 +436,7 @@ services:
       REALTIME_STATE_SERVICE_URL: http://realtime-state-service:8012
       SIGNAL_ENGINE_URL: http://signal-engine:8009
       RISK_ENGINE_URL: http://risk-engine:8013
+      PAPER_TRADING_SERVICE_URL: http://paper-trading-service:8014
       REDIS_URL: redis://redis:6379/0
       JWT_SECRET: change_me
       LOG_LEVEL: INFO
@@ -426,6 +454,7 @@ services:
       - realtime-state-service
       - signal-engine
       - risk-engine
+      - paper-trading-service
 
 volumes:
   postgres_data:
