@@ -1,0 +1,13 @@
+from dataclasses import dataclass
+import os
+
+@dataclass(frozen=True)
+class Settings:
+    service_name: str = os.getenv("SERVICE_NAME", "api-gateway")
+    env: str = os.getenv("ENV", "dev")
+    auth_service_url: str = os.getenv("AUTH_SERVICE_URL", "http://localhost:8001")
+    redis_url: str = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+    jwt_secret: str = os.getenv("JWT_SECRET", "change_me")
+    log_level: str = os.getenv("LOG_LEVEL", "INFO")
+
+settings = Settings()

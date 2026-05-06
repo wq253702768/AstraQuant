@@ -1,0 +1,57 @@
+# AstraQuant Backend
+
+永续合约智能交易系统正式后端 Monorepo。
+
+Sprint 1 聚焦项目基础框架、Auth Service 与 API Gateway：
+
+- 本地基础设施：PostgreSQL、Redis、NATS、MinIO
+- Python/FastAPI 服务模板与共享公共库
+- Go 服务模板
+- Auth Service：用户、角色、权限、JWT、登录日志
+- API Gateway：统一入口、鉴权、代理、trace_id、WebSocket 预留
+
+## 本地启动
+
+```bash
+cd astraquant-backend
+docker compose up -d postgres redis nats minio
+pip install -e shared/python
+pip install -e services/auth-service
+pip install -e services/api-gateway
+./scripts/migrate_all.sh
+PYTHONPATH=shared/python:services/auth-service python scripts/create_admin_user.py
+```
+
+启动 Auth Service：
+
+```bash
+cd services/auth-service
+uvicorn app.main:app --host 0.0.0.0 --port 8001
+```
+
+启动 API Gateway：
+
+```bash
+cd services/api-gateway
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+## Sprint 1 接口
+
+- `GET /health`
+- `POST /api/auth/login`
+- `GET /api/auth/me`
+- `GET /api/dashboard/overview`
+- `WS /api/ws/tasks`
+- `WS /api/ws/realtime`
+
+默认管理员账号：
+
+- 用户名：`admin`
+- 密码：`password`
+
+所有正式 HTTP 响应遵循：
+
+```json
+{ "code": "SUCCESS", "message": "OK", "trace_id": "trace_xxx", "data": {} }
+```

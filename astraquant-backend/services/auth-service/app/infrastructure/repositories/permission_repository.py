@@ -1,0 +1,2 @@
+class PermissionRepository:
+    pass

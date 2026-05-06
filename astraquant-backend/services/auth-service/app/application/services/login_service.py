@@ -1,0 +1,30 @@
+from astra_common.errors import AppError, ErrorCode
+from app.config import settings
+from app.domain.services.password_service import PasswordService
+from app.domain.services.token_service import TokenService
+from app.infrastructure.repositories.user_repository import UserRepository
+from app.schemas.auth import LoginResponse, UserTokenInfo
+
+class LoginService:
+    def __init__(self, user_repository: UserRepository):
+        self.user_repository = user_repository
+        self.password_service = PasswordService()
+        self.token_service = TokenService()
+
+    async def login(self, username: str, password: str, ip_address: str | None, user_agent: str | None) -> LoginResponse:
+        record = await self.user_repository.get_by_username(username)
+        if record is None:
+            await self.user_repository.write_login_log(username, False, failure_reason="USER_NOT_FOUND", ip_address=ip_address, user_agent=user_agent)
+            raise AppError(ErrorCode.UNAUTHORIZED, "用户名或密码错误", 401)
+        model, user = record
+        if not user.active:
+            await self.user_repository.write_login_log(username, False, user_id=user.id, failure_reason="USER_DISABLED", ip_address=ip_address, user_agent=user_agent)
+            raise AppError(ErrorCode.FORBIDDEN, "用户已被禁用", 403)
+        if not self.password_service.verify(password, model.password_hash):
+            await self.user_repository.write_login_log(username, False, user_id=user.id, failure_reason="WRONG_PASSWORD", ip_address=ip_address, user_agent=user_agent)
+            raise AppError(ErrorCode.UNAUTHORIZED, "用户名或密码错误", 401)
+        access_token = self.token_service.create_access_token(user.id, user.roles, user.permissions)
+        refresh_token = self.token_service.create_refresh_token(user.id)
+        await self.user_repository.touch_last_login(user.id)
+        await self.user_repository.write_login_log(username, True, user_id=user.id, ip_address=ip_address, user_agent=user_agent)
+        return LoginResponse(access_token=access_token, refresh_token=refresh_token, expires_in=settings.jwt_access_expire_seconds, user=UserTokenInfo(id=user.id, username=user.username, display_name=user.display_name, roles=user.roles))
