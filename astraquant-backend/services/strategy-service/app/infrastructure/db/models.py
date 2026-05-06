@@ -1,0 +1,64 @@
+from datetime import datetime
+from uuid import uuid4
+from sqlalchemy import Boolean, DateTime, ForeignKey, String, Text, UniqueConstraint, func
+from sqlalchemy.dialects.postgresql import JSONB, UUID
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from app.infrastructure.db.base import Base
+
+class StrategyModel(Base):
+    __tablename__ = "strategy"
+    id: Mapped[str] = mapped_column(UUID(as_uuid=False), primary_key=True, default=lambda: str(uuid4()))
+    name: Mapped[str] = mapped_column(String(128))
+    code: Mapped[str] = mapped_column(String(128), unique=True, index=True)
+    strategy_type: Mapped[str] = mapped_column(String(64), index=True)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    status: Mapped[str] = mapped_column(String(64), index=True)
+    tags: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    created_by: Mapped[str] = mapped_column(UUID(as_uuid=False))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    versions: Mapped[list["StrategyVersionModel"]] = relationship(back_populates="strategy")
+
+class StrategyTemplateModel(Base):
+    __tablename__ = "strategy_template"
+    id: Mapped[str] = mapped_column(UUID(as_uuid=False), primary_key=True, default=lambda: str(uuid4()))
+    code: Mapped[str] = mapped_column(String(128), unique=True)
+    name: Mapped[str] = mapped_column(String(128))
+    strategy_type: Mapped[str] = mapped_column(String(64), index=True)
+    default_params: Mapped[dict] = mapped_column(JSONB)
+    param_schema: Mapped[dict] = mapped_column(JSONB)
+    risk_schema: Mapped[dict] = mapped_column(JSONB)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    enabled: Mapped[bool] = mapped_column(Boolean, default=True, index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+class StrategyVersionModel(Base):
+    __tablename__ = "strategy_version"
+    __table_args__ = (UniqueConstraint("strategy_id", "version", name="uk_strategy_version"),)
+    id: Mapped[str] = mapped_column(UUID(as_uuid=False), primary_key=True, default=lambda: str(uuid4()))
+    strategy_id: Mapped[str] = mapped_column(UUID(as_uuid=False), ForeignKey("strategy.id"), index=True)
+    version: Mapped[str] = mapped_column(String(32))
+    template_id: Mapped[str] = mapped_column(UUID(as_uuid=False), ForeignKey("strategy_template.id"))
+    params_json: Mapped[dict] = mapped_column(JSONB)
+    risk_params_json: Mapped[dict] = mapped_column(JSONB)
+    params_hash: Mapped[str] = mapped_column(String(128))
+    code_hash: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    source_version_id: Mapped[str | None] = mapped_column(UUID(as_uuid=False), nullable=True)
+    created_source: Mapped[str] = mapped_column(String(64), default="manual")
+    status: Mapped[str] = mapped_column(String(64), default="draft", index=True)
+    created_by: Mapped[str] = mapped_column(UUID(as_uuid=False))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    strategy: Mapped[StrategyModel] = relationship(back_populates="versions")
+    template: Mapped[StrategyTemplateModel] = relationship()
+
+class StrategyStatusLogModel(Base):
+    __tablename__ = "strategy_status_log"
+    id: Mapped[str] = mapped_column(UUID(as_uuid=False), primary_key=True, default=lambda: str(uuid4()))
+    strategy_id: Mapped[str] = mapped_column(UUID(as_uuid=False), ForeignKey("strategy.id"), index=True)
+    strategy_version_id: Mapped[str | None] = mapped_column(UUID(as_uuid=False), ForeignKey("strategy_version.id"), nullable=True)
+    from_status: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    to_status: Mapped[str] = mapped_column(String(64))
+    reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    operator_id: Mapped[str] = mapped_column(UUID(as_uuid=False))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)

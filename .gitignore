@@ -1,5 +1,7 @@
 node_modules/
+frontend/node_modules/
 dist/
+frontend/dist/
 .env
 .env.*
 !.env.example
@@ -9,5 +11,7 @@ yarn-error.log*
 pnpm-debug.log*
 .DS_Store
 coverage/
+frontend/coverage/
 *.tsbuildinfo
 node_modules/.tmp/
+frontend/node_modules/.tmp/

@@ -1,0 +1,5 @@
+STRATEGY_CREATED = "strategy.created"
+STRATEGY_VERSION_CREATED = "strategy.version.created"
+STRATEGY_STATUS_CHANGED = "strategy.status.changed"
+BACKTEST_TASK_CREATED = "backtest.task.created"
+AUDIT_EVENT = "audit.event"
