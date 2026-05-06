@@ -200,6 +200,18 @@ Sprint 14 新增模拟盘监控服务接口：
 - `GET /api/paper-monitor/admission-results/{id}`
 - `GET /api/paper-monitor/daily-reports`
 
+Sprint 15 新增交易所账户服务接口：
+
+- `POST /api/exchange-accounts`
+- `GET /api/exchange-accounts`
+- `POST /api/exchange-accounts/{id}/credentials`
+- `POST /api/exchange-accounts/{id}/test-connectivity`
+- `POST /api/exchange-accounts/{id}/enable`
+- `POST /api/exchange-accounts/{id}/disable`
+- `GET /api/exchange-accounts/{id}/state`
+- `GET /api/exchange-accounts/{id}/positions`
+- `GET /api/exchange-accounts/{id}/orders`
+
 Sprint 2 新增策略服务接口：
 
 - `GET /api/strategy-templates`

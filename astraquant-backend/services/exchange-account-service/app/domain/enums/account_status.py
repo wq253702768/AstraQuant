@@ -1,0 +1,11 @@
+from enum import StrEnum
+class AccountStatus(StrEnum):
+    CREATED = "CREATED"
+    CREDENTIAL_BOUND = "CREDENTIAL_BOUND"
+    VERIFYING = "VERIFYING"
+    ACTIVE = "ACTIVE"
+    READ_ONLY = "READ_ONLY"
+    INVALID = "INVALID"
+    DISABLED = "DISABLED"
+    REVOKED = "REVOKED"
+    ERROR = "ERROR"

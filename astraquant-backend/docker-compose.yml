@@ -443,6 +443,48 @@ services:
       - nats
       - paper-trading-service
 
+  exchange-account-service:
+    build:
+      context: .
+      dockerfile: services/exchange-account-service/Dockerfile
+    container_name: astraquant-exchange-account-service
+    environment:
+      SERVICE_NAME: exchange-account-service
+      ENV: dev
+      HTTP_PORT: 8016
+      DATABASE_URL: postgresql+asyncpg://astra:astra_password@postgres:5432/astraquant
+      REDIS_URL: redis://redis:6379/0
+      NATS_URL: nats://nats:4222
+      OKX_PRIVATE_GATEWAY_URL: http://okx-private-account-gateway:8017
+      CRYPTO_PROVIDER: LOCAL
+      LOCAL_MASTER_KEY: change_me_32_bytes_minimum
+      LOG_LEVEL: INFO
+    ports:
+      - "8016:8016"
+    depends_on:
+      - postgres
+      - redis
+      - nats
+
+  okx-private-account-gateway:
+    build:
+      context: .
+      dockerfile: services/okx-private-account-gateway/Dockerfile
+    container_name: astraquant-okx-private-account-gateway
+    environment:
+      SERVICE_NAME: okx-private-account-gateway
+      ENV: dev
+      HTTP_PORT: 8017
+      NATS_URL: nats://nats:4222
+      OKX_REST_BASE_URL: https://www.okx.com
+      OKX_PRIVATE_WS_URL: wss://ws.okx.com:8443/ws/v5/private
+      LOG_LEVEL: INFO
+    ports:
+      - "8017:8017"
+    depends_on:
+      - redis
+      - nats
+
   api-gateway:
     build:
       context: .
@@ -464,6 +506,7 @@ services:
       RISK_ENGINE_URL: http://risk-engine:8013
       PAPER_TRADING_SERVICE_URL: http://paper-trading-service:8014
       PAPER_MONITOR_SERVICE_URL: http://paper-monitor-service:8015
+      EXCHANGE_ACCOUNT_SERVICE_URL: http://exchange-account-service:8016
       REDIS_URL: redis://redis:6379/0
       JWT_SECRET: change_me
       LOG_LEVEL: INFO
@@ -483,6 +526,7 @@ services:
       - risk-engine
       - paper-trading-service
       - paper-monitor-service
+      - exchange-account-service
 
 volumes:
   postgres_data:

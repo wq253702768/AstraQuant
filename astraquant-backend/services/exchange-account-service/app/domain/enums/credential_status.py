@@ -1,0 +1,11 @@
+from enum import StrEnum
+class CredentialStatus(StrEnum):
+    CREATED = "CREATED"
+    ENCRYPTED = "ENCRYPTED"
+    VERIFYING = "VERIFYING"
+    VALID = "VALID"
+    INVALID = "INVALID"
+    REVOKED = "REVOKED"
+    EXPIRED = "EXPIRED"
+    PERMISSION_DENIED = "PERMISSION_DENIED"
+    IP_NOT_ALLOWED = "IP_NOT_ALLOWED"
