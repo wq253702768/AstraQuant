@@ -1,0 +1,2 @@
+class DecisionResponse(dict):
+    pass

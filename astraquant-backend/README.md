@@ -136,6 +136,15 @@ Sprint 7 新增 AI 分析服务接口：
 - `GET /api/ai/tasks/{id}/model-calls`
 - `GET /api/ai/prompts`
 
+Sprint 8 新增评分与报告接口：
+
+- `POST /api/strategy-scores/calculate`
+- `GET /api/strategy-scores/{id}`
+- `GET /api/strategy-versions/{id}/score/latest`
+- `POST /api/reports/build`
+- `GET /api/reports/tasks/{id}`
+- `GET /api/reports/tasks/{id}/files`
+
 Sprint 2 新增策略服务接口：
 
 - `GET /api/strategy-templates`
