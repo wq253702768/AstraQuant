@@ -1,0 +1,1 @@
+class RuntimeResponse(dict): pass

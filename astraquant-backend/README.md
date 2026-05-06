@@ -164,6 +164,14 @@ Sprint 10 新增实时状态服务：
 - `GET /api/state/snapshot/{exchange}/{symbol}`
 - `GET /api/state/freshness/{exchange}/{symbol}`
 
+Sprint 11 新增信号服务：
+
+- `GET /api/signals`
+- `GET /api/signals/{id}`
+- `GET /api/signal-runtime/strategies`
+- `POST /api/signal-runtime/reload`
+- `POST /api/signal-runtime/strategies/{id}/pause`
+
 Sprint 2 新增策略服务接口：
 
 - `GET /api/strategy-templates`

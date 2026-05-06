@@ -41,6 +41,8 @@ PERMISSION_NAMES = {
     "report:build": "生成报告",
     "report:read": "查看报告",
     "market_state:read": "查看实时行情状态",
+    "signal:read": "查看交易信号",
+    "signal:manage": "管理信号运行",
 }
 
 async def main() -> None:

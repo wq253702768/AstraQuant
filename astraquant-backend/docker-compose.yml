@@ -331,6 +331,40 @@ services:
       - redis
       - realtime-market-gateway
 
+  signal-engine:
+    build:
+      context: .
+      dockerfile: services/signal-engine/Dockerfile
+    container_name: astraquant-signal-engine
+    environment:
+      SERVICE_NAME: signal-engine
+      ENV: dev
+      HTTP_PORT: 8009
+      DATABASE_URL: postgresql+asyncpg://astra:astra_password@postgres:5432/astraquant
+      REDIS_URL: redis://redis:6379/0
+      NATS_URL: nats://nats:4222
+      STRATEGY_SERVICE_URL: http://strategy-service:8002
+      STRATEGY_SCORE_SERVICE_URL: http://strategy-score-service:8007
+      REALTIME_STATE_SERVICE_URL: http://realtime-state-service:8012
+      DEFAULT_EXCHANGE: OKX
+      DEFAULT_SYMBOLS: BTC-USDT-SWAP,ETH-USDT-SWAP
+      DEFAULT_TIMEFRAMES: 1m,5m
+      RUNTIME_MODE: HYBRID
+      STATE_POLL_INTERVAL_MS: 1000
+      SIGNAL_COOLDOWN_SECONDS: 300
+      MAX_SPREAD_PCT: 0.001
+      MAX_ABS_FUNDING_RATE: 0.0005
+      LOG_LEVEL: INFO
+    ports:
+      - "8009:8009"
+    depends_on:
+      - postgres
+      - redis
+      - nats
+      - strategy-service
+      - strategy-score-service
+      - realtime-state-service
+
   api-gateway:
     build:
       context: .
@@ -348,6 +382,7 @@ services:
       STRATEGY_SCORE_SERVICE_URL: http://strategy-score-service:8007
       REPORT_SERVICE_URL: http://report-service:8008
       REALTIME_STATE_SERVICE_URL: http://realtime-state-service:8012
+      SIGNAL_ENGINE_URL: http://signal-engine:8009
       REDIS_URL: redis://redis:6379/0
       JWT_SECRET: change_me
       LOG_LEVEL: INFO
@@ -363,6 +398,7 @@ services:
       - strategy-score-service
       - report-service
       - realtime-state-service
+      - signal-engine
 
 volumes:
   postgres_data:
