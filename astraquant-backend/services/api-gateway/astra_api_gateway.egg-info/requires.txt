@@ -1,0 +1,11 @@
+astra-common
+fastapi
+uvicorn[standard]
+httpx
+pydantic
+pyjwt
+
+[test]
+pytest
+pytest-asyncio
+httpx

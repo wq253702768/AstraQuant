@@ -1,0 +1,5 @@
+syntax = "proto3";
+
+package astraquant.common.v1;
+
+message TraceContext { string trace_id = 1; }
