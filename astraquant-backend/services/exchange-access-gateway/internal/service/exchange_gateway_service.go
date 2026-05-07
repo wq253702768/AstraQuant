@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"net/http"
+	"strings"
 	"time"
 
 	domainadapter "github.com/astraquant/exchange-access-gateway/internal/domain/adapter"
@@ -21,10 +22,11 @@ type ExchangeGatewayService struct {
 	auditor  *RequestAuditService
 	metrics  *observability.Metrics
 	logger   *zap.Logger
+	metadata *MetadataStore
 }
 
 func NewExchangeGatewayService(adapters map[string]ExchangeAdapter, limiter RateLimiter, breaker *CircuitBreaker, auditor *RequestAuditService, metrics *observability.Metrics, logger *zap.Logger) *ExchangeGatewayService {
-	return &ExchangeGatewayService{adapters: adapters, limiter: limiter, breaker: breaker, auditor: auditor, metrics: metrics, logger: logger}
+	return &ExchangeGatewayService{adapters: adapters, limiter: limiter, breaker: breaker, auditor: auditor, metrics: metrics, logger: logger, metadata: NewMetadataStore()}
 }
 
 func (s *ExchangeGatewayService) adapter(exchange string) (ExchangeAdapter, error) {
@@ -55,7 +57,37 @@ func (s *ExchangeGatewayService) GetInstruments(ctx context.Context, exchange st
 	return result, err
 }
 
+func (s *ExchangeGatewayService) SyncInstruments(ctx context.Context, exchange string, req models.GetInstrumentsRequest, traceID string) (*models.InstrumentSyncResult, error) {
+	items, err := s.GetInstruments(ctx, exchange, req, traceID)
+	if err != nil {
+		return nil, err
+	}
+	count := s.metadata.Upsert(items)
+	return &models.InstrumentSyncResult{Exchange: exchange, InstType: strings.ToUpper(req.ContractType), Status: "SUCCESS", SuccessCount: count, FailedCount: 0}, nil
+}
+
+func (s *ExchangeGatewayService) ListStoredInstruments(exchange string) []models.UnifiedInstrument {
+	return s.metadata.List(exchange)
+}
+
+func (s *ExchangeGatewayService) GetStoredInstrument(exchange, symbol string) (models.UnifiedInstrument, bool) {
+	return s.metadata.Get(exchange, symbol)
+}
+
+func (s *ExchangeGatewayService) ListSymbolMappings(exchange string) []models.SymbolMapping {
+	return s.metadata.Mappings(exchange)
+}
+
 func (s *ExchangeGatewayService) GetKlines(ctx context.Context, exchange string, req models.GetKlinesRequest, traceID string) ([]models.UnifiedKline, error) {
+	if !IsSupportedSymbol(req.Symbol) {
+		return nil, domainerrors.New(domainerrors.SymbolNotSupported, "symbol not supported", http.StatusBadRequest)
+	}
+	if !supportedTimeframe(req.Timeframe) {
+		return nil, domainerrors.New(domainerrors.TimeframeNotSupported, "timeframe not supported", http.StatusBadRequest)
+	}
+	if req.Limit > 300 {
+		return nil, domainerrors.New(domainerrors.RateLimited, "limit exceeds maximum 300", http.StatusBadRequest)
+	}
 	var result []models.UnifiedKline
 	err := s.call(ctx, exchange, "klines", "P5", traceID, func(adapter ExchangeAdapter) error {
 		value, err := adapter.GetKlines(ctx, req)
@@ -65,7 +97,23 @@ func (s *ExchangeGatewayService) GetKlines(ctx context.Context, exchange string,
 	return result, err
 }
 
+func (s *ExchangeGatewayService) GetTicker(ctx context.Context, exchange string, req models.GetTickerRequest, traceID string) (*models.UnifiedTicker, error) {
+	if !IsSupportedSymbol(req.Symbol) {
+		return nil, domainerrors.New(domainerrors.SymbolNotSupported, "symbol not supported", http.StatusBadRequest)
+	}
+	var result *models.UnifiedTicker
+	err := s.call(ctx, exchange, "ticker", "P4", traceID, func(adapter ExchangeAdapter) error {
+		value, err := adapter.GetTicker(ctx, req)
+		result = value
+		return err
+	})
+	return result, err
+}
+
 func (s *ExchangeGatewayService) GetFundingRate(ctx context.Context, exchange string, req models.GetFundingRateRequest, traceID string) (*models.UnifiedFundingRate, error) {
+	if !IsSupportedSymbol(req.Symbol) {
+		return nil, domainerrors.New(domainerrors.SymbolNotSupported, "symbol not supported", http.StatusBadRequest)
+	}
 	var result *models.UnifiedFundingRate
 	err := s.call(ctx, exchange, "funding-rate", "P4", traceID, func(adapter ExchangeAdapter) error {
 		value, err := adapter.GetFundingRate(ctx, req)
@@ -76,6 +124,12 @@ func (s *ExchangeGatewayService) GetFundingRate(ctx context.Context, exchange st
 }
 
 func (s *ExchangeGatewayService) GetFundingRateHistory(ctx context.Context, exchange string, req models.GetFundingRateHistoryRequest, traceID string) ([]models.UnifiedFundingRate, error) {
+	if !IsSupportedSymbol(req.Symbol) {
+		return nil, domainerrors.New(domainerrors.SymbolNotSupported, "symbol not supported", http.StatusBadRequest)
+	}
+	if req.Limit > 100 {
+		return nil, domainerrors.New(domainerrors.RateLimited, "limit exceeds maximum 100", http.StatusBadRequest)
+	}
 	var result []models.UnifiedFundingRate
 	err := s.call(ctx, exchange, "funding-rate-history", "P5", traceID, func(adapter ExchangeAdapter) error {
 		value, err := adapter.GetFundingRateHistory(ctx, req)
@@ -86,6 +140,9 @@ func (s *ExchangeGatewayService) GetFundingRateHistory(ctx context.Context, exch
 }
 
 func (s *ExchangeGatewayService) GetMarkPrice(ctx context.Context, exchange string, req models.GetMarkPriceRequest, traceID string) (*models.UnifiedMarkPrice, error) {
+	if !IsSupportedSymbol(req.Symbol) {
+		return nil, domainerrors.New(domainerrors.SymbolNotSupported, "symbol not supported", http.StatusBadRequest)
+	}
 	var result *models.UnifiedMarkPrice
 	err := s.call(ctx, exchange, "mark-price", "P4", traceID, func(adapter ExchangeAdapter) error {
 		value, err := adapter.GetMarkPrice(ctx, req)
@@ -93,6 +150,28 @@ func (s *ExchangeGatewayService) GetMarkPrice(ctx context.Context, exchange stri
 		return err
 	})
 	return result, err
+}
+
+func (s *ExchangeGatewayService) GetOpenInterest(ctx context.Context, exchange string, req models.GetOpenInterestRequest, traceID string) (*models.UnifiedOpenInterest, error) {
+	if !IsSupportedSymbol(req.Symbol) {
+		return nil, domainerrors.New(domainerrors.SymbolNotSupported, "symbol not supported", http.StatusBadRequest)
+	}
+	var result *models.UnifiedOpenInterest
+	err := s.call(ctx, exchange, "open-interest", "P4", traceID, func(adapter ExchangeAdapter) error {
+		value, err := adapter.GetOpenInterest(ctx, req)
+		result = value
+		return err
+	})
+	return result, err
+}
+
+func supportedTimeframe(timeframe string) bool {
+	switch timeframe {
+	case "1m", "5m", "15m", "1h", "4h":
+		return true
+	default:
+		return false
+	}
 }
 
 func (s *ExchangeGatewayService) call(ctx context.Context, exchange, endpoint, priority, traceID string, fn func(ExchangeAdapter) error) error {

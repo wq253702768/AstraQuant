@@ -16,6 +16,13 @@ func TestOKXKlineMapper(t *testing.T) {
 	}
 }
 
+func TestOKXTickerMapper(t *testing.T) {
+	item := MapTicker(map[string]any{"instId": "BTC-USDT-SWAP", "last": "98000.1", "bidPx": "98000", "askPx": "98000.2", "bidSz": "1.2", "askSz": "1.3", "open24h": "97000", "high24h": "99000", "low24h": "96000", "vol24h": "123", "volCcy24h": "456", "ts": "1760000000000"})
+	if item.InternalSymbol != "BTC-USDT-SWAP" || item.LastPrice != "98000.1" || item.ExchangeTime != 1760000000000 {
+		t.Fatalf("bad ticker mapping: %+v", item)
+	}
+}
+
 func TestOKXFundingMapper(t *testing.T) {
 	item := MapFundingRate(map[string]any{"instId": "BTC-USDT-SWAP", "fundingRate": "0.0001", "realizedRate": "0.0001", "fundingTime": "1760000000000", "nextFundingTime": "1760028800000", "markPx": "81420.1"})
 	if item.FundingTime != 1760000000000 || item.MarkPrice != "81420.1" {
@@ -27,5 +34,12 @@ func TestOKXMarkPriceMapper(t *testing.T) {
 	item := MapMarkPrice(map[string]any{"instId": "BTC-USDT-SWAP", "markPx": "81420.1", "idxPx": "81418.9", "ts": "1760000000000"})
 	if item.IndexPrice != "81418.9" || item.Timestamp != 1760000000000 {
 		t.Fatalf("bad mark mapping: %+v", item)
+	}
+}
+
+func TestOKXOpenInterestMapper(t *testing.T) {
+	item := MapOpenInterest(map[string]any{"instId": "BTC-USDT-SWAP", "oi": "123456", "oiCcy": "1234.56", "ts": "1760000000000"})
+	if item.OpenInterest != "123456" || item.OpenInterestCcy != "1234.56" || item.ExchangeTime != 1760000000000 {
+		t.Fatalf("bad open interest mapping: %+v", item)
 	}
 }

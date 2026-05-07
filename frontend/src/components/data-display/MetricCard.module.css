@@ -7,11 +7,12 @@
   border-radius: 12px;
 }
 
-.body {
+.card :global(.ant-card-body) {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  min-height: 92px;
+  min-height: 112px;
+  padding: 18px;
 }
 
 .header {

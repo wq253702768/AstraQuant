@@ -30,17 +30,27 @@ func NewRouter(cfg config.Config, gateway *service.ExchangeGatewayService, metri
 	instruments := handlers.InstrumentsHandler{Gateway: gateway}
 	funding := handlers.FundingHandler{Gateway: gateway}
 	mark := handlers.MarkPriceHandler{Gateway: gateway}
+	ticker := handlers.TickerHandler{Gateway: gateway}
+	metadata := handlers.MetadataHandler{Gateway: gateway}
+	openInterest := handlers.OpenInterestHandler{Gateway: gateway}
 
 	engine.GET("/health", health.Health)
 	engine.GET("/metrics", gin.WrapH(promhttp.Handler()))
+	public := engine.Group("/exchange-public")
+	public.POST("/instruments/sync", metadata.SyncInstruments)
+	public.GET("/instruments", metadata.ListInstruments)
+	public.GET("/instruments/:symbol", metadata.GetInstrument)
+	public.GET("/symbol-mappings", metadata.SymbolMappings)
 
 	v1 := engine.Group("/api/v1/exchanges/:exchange")
 	v1.GET("/time", market.GetTime)
 	v1.GET("/instruments", instruments.GetInstruments)
+	v1.GET("/ticker", ticker.GetTicker)
 	v1.GET("/klines", market.GetKlines)
 	v1.GET("/funding-rate", funding.GetFundingRate)
 	v1.GET("/funding-rate-history", funding.GetFundingRateHistory)
 	v1.GET("/mark-price", mark.GetMarkPrice)
+	v1.GET("/open-interest", openInterest.GetOpenInterest)
 
 	return &Router{engine: engine, cfg: cfg}
 }

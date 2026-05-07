@@ -3,6 +3,7 @@ package okx
 import (
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/astraquant/exchange-access-gateway/internal/domain/models"
 )
@@ -99,6 +100,27 @@ func MapInstrument(data map[string]any) models.UnifiedInstrument {
 	}
 }
 
+func MapTicker(data map[string]any) models.UnifiedTicker {
+	exchangeSymbol := str(data, "instId")
+	return models.UnifiedTicker{
+		Exchange:       string(models.ExchangeOKX),
+		InternalSymbol: FromOKXSymbol(exchangeSymbol),
+		ExchangeSymbol: exchangeSymbol,
+		LastPrice:      str(data, "last"),
+		BestBidPrice:   str(data, "bidPx"),
+		BestAskPrice:   str(data, "askPx"),
+		BestBidSize:    str(data, "bidSz"),
+		BestAskSize:    str(data, "askSz"),
+		Open24h:        str(data, "open24h"),
+		High24h:        str(data, "high24h"),
+		Low24h:         str(data, "low24h"),
+		Volume24h:      str(data, "vol24h"),
+		VolumeCcy24h:   str(data, "volCcy24h"),
+		ExchangeTime:   int64FromString(str(data, "ts")),
+		ReceivedAt:     time.Now().UnixMilli(),
+	}
+}
+
 func MapKline(row []any, exchangeSymbol string, timeframe string) models.UnifiedKline {
 	value := func(index int) string {
 		if index >= len(row) {
@@ -144,5 +166,18 @@ func MapMarkPrice(data map[string]any) models.UnifiedMarkPrice {
 		MarkPrice:      str(data, "markPx"),
 		IndexPrice:     str(data, "idxPx"),
 		Timestamp:      int64FromString(str(data, "ts")),
+	}
+}
+
+func MapOpenInterest(data map[string]any) models.UnifiedOpenInterest {
+	exchangeSymbol := str(data, "instId")
+	return models.UnifiedOpenInterest{
+		Exchange:        string(models.ExchangeOKX),
+		InternalSymbol:  FromOKXSymbol(exchangeSymbol),
+		ExchangeSymbol:  exchangeSymbol,
+		OpenInterest:    str(data, "oi"),
+		OpenInterestCcy: str(data, "oiCcy"),
+		ExchangeTime:    int64FromString(str(data, "ts")),
+		ReceivedAt:      time.Now().UnixMilli(),
 	}
 }
