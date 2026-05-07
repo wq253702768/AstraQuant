@@ -3,6 +3,7 @@ import type {
   CreateStrategyPayload,
   CreateStrategyVersionPayload,
   CopyStrategyPayload,
+  PublishStrategyVersionResponse,
   StrategyDetail,
   StrategyListResponse,
   StrategyTemplateResponse,
@@ -45,5 +46,11 @@ export const strategyApi = {
   },
   updateVersionParams(versionId: string, payload: UpdateStrategyVersionParamsPayload) {
     return request.put<unknown, { strategy_version_id: string; status: string; params_hash: string }>(`/api/strategy-versions/${versionId}/params`, payload);
+  },
+  publishVersion(strategyId: string, versionId: string, publishNote?: string) {
+    return request.post<unknown, PublishStrategyVersionResponse>(`/api/strategies/${strategyId}/versions/${versionId}/publish`, { publish_note: publishNote });
+  },
+  copyVersion(strategyId: string, versionId: string, changeReason: string) {
+    return request.post<unknown, { strategy_version_id: string; version: string; status: string; params_hash: string }>(`/api/strategies/${strategyId}/versions/${versionId}/copy`, { change_reason: changeReason });
   },
 };

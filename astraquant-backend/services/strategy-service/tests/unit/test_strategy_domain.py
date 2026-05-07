@@ -5,6 +5,7 @@ from app.domain.services.strategy_param_validator import StrategyParamValidator
 from app.domain.services.strategy_state_machine import StrategyStateMachine
 from app.domain.services.strategy_template_service import DEFAULT_RISK_PARAMS, template_seed_rows
 from app.schemas.strategy import CopyStrategyRequest, CreateStrategyRequest, UpdateStrategyRequest
+from app.schemas.strategy_version import CopyStrategyVersionRequest, PublishStrategyVersionRequest
 from app.utils.hash_utils import calc_params_hash
 
 
@@ -49,3 +50,10 @@ def test_strategy_update_and_copy_payloads():
     copy = CopyStrategyRequest(name="副本", code="copy_code")
     assert update.tags == ["EMA"]
     assert copy.code == "copy_code"
+
+
+def test_publish_and_copy_version_payloads():
+    publish = PublishStrategyVersionRequest(publish_note="发布")
+    copy = CopyStrategyVersionRequest(change_reason="复制为草稿")
+    assert publish.publish_note == "发布"
+    assert copy.change_reason == "复制为草稿"

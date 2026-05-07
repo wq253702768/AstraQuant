@@ -44,7 +44,10 @@ export interface StrategyVersionDetail extends StrategyVersionSummary {
   strategy_id: string;
   params_json: Record<string, unknown>;
   risk_params_json: Record<string, unknown>;
+  config_hash?: string | null;
   source_version_id?: string | null;
+  published_at?: string | null;
+  published_by?: string | null;
 }
 
 export interface StrategyVersionListResponse {
@@ -62,6 +65,15 @@ export interface CreateStrategyVersionPayload {
 export interface UpdateStrategyVersionParamsPayload {
   params_json: Record<string, unknown>;
   risk_params_json: Record<string, unknown>;
+}
+
+export interface PublishStrategyVersionResponse {
+  id: string;
+  strategy_id: string;
+  version: string;
+  status: string;
+  config_hash: string;
+  published_at: string;
 }
 
 export interface StrategyDetail extends StrategyListItem {

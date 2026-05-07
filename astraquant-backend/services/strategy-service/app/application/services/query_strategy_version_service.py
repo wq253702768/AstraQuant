@@ -39,6 +39,9 @@ class QueryStrategyVersionService:
             params_json=version.params_json,
             risk_params_json=version.risk_params_json,
             params_hash=version.params_hash,
+            config_hash=version.config_hash,
             source_version_id=version.source_version_id,
+            published_at=version.published_at.isoformat() if version.published_at else None,
+            published_by=version.published_by,
             created_at=version.created_at.isoformat() if version.created_at else None,
         )

@@ -27,6 +27,8 @@ class UpdateStrategyParamsService:
         version = await self.version_repo.get(version_id)
         if version is None:
             raise AppError("STRATEGY_VERSION_NOT_FOUND", "策略版本不存在", 404)
+        if version.status == StrategyStatus.PUBLISHED.value:
+            raise AppError("STRATEGY_VERSION_ALREADY_PUBLISHED", "已发布的策略版本不可修改", 409)
         if version.status != StrategyStatus.DRAFT.value:
             raise AppError("STRATEGY_VERSION_NOT_DRAFT", "非草稿版本不可编辑", 409)
         strategy = await self.strategy_repo.get(version.strategy_id)
