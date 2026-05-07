@@ -1,6 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.infrastructure.db.models import StrategyTemplateModel
+from uuid import UUID
 
 class StrategyTemplateRepository:
     def __init__(self, session: AsyncSession):
@@ -15,7 +16,12 @@ class StrategyTemplateRepository:
         return result.scalar_one_or_none()
 
     async def get(self, template_id_or_code: str) -> StrategyTemplateModel | None:
-        result = await self.session.execute(select(StrategyTemplateModel).where((StrategyTemplateModel.id == template_id_or_code) | (StrategyTemplateModel.code == template_id_or_code)))
+        try:
+            UUID(str(template_id_or_code))
+            condition = (StrategyTemplateModel.id == template_id_or_code) | (StrategyTemplateModel.code == template_id_or_code)
+        except ValueError:
+            condition = StrategyTemplateModel.code == template_id_or_code
+        result = await self.session.execute(select(StrategyTemplateModel).where(condition))
         return result.scalar_one_or_none()
 
     async def upsert_seed(self, row: dict) -> StrategyTemplateModel:
