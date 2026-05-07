@@ -11,6 +11,7 @@ from app.infrastructure.nats import topics
 from app.infrastructure.nats.publisher import EventPublisher
 from app.infrastructure.repositories.strategy_repository import StrategyRepository
 from app.infrastructure.repositories.strategy_status_log_repository import StrategyStatusLogRepository
+from app.infrastructure.repositories.strategy_template_repository import StrategyTemplateRepository
 from app.infrastructure.repositories.strategy_version_repository import StrategyVersionRepository
 from app.schemas.strategy_version import CreateStrategyVersionRequest, CreateStrategyVersionResponse
 from app.utils.hash_utils import calc_params_hash
@@ -18,6 +19,7 @@ from app.utils.hash_utils import calc_params_hash
 class CreateStrategyVersionService:
     def __init__(self, session):
         self.strategy_repo = StrategyRepository(session)
+        self.template_repo = StrategyTemplateRepository(session)
         self.version_repo = StrategyVersionRepository(session)
         self.log_repo = StrategyStatusLogRepository(session)
         self.validator = StrategyParamValidator()
@@ -28,21 +30,31 @@ class CreateStrategyVersionService:
         strategy = await self.strategy_repo.get(strategy_id)
         if strategy is None:
             raise AppError("STRATEGY_NOT_FOUND", "策略不存在", 404)
-        source = await self.version_repo.get(payload.source_version_id)
-        if source is None or source.strategy_id != strategy_id:
-            raise AppError("STRATEGY_VERSION_NOT_FOUND", "来源策略版本不存在", 404)
-        params = payload.params_json or source.params_json
-        risk = payload.risk_params_json or source.risk_params_json
-        self.validator.validate(params, risk, source.template.param_schema, source.template.risk_schema)
+        source = await self.version_repo.get(payload.source_version_id) if payload.source_version_id else await self.strategy_repo.latest_version(strategy_id)
+        if source is None:
+            template = await self.template_repo.first_enabled()
+            if template is None:
+                raise AppError("STRATEGY_TEMPLATE_NOT_FOUND", "策略模板不存在或未启用", 404)
+            params = payload.params_json or template.default_params
+            risk = payload.risk_params_json or {}
+            self.validator.validate(params, risk, template.param_schema, template.risk_schema)
+            template_id = template.id
+            source_version_id = None
+        else:
+            if source.strategy_id != strategy_id:
+                raise AppError("STRATEGY_VERSION_NOT_FOUND", "来源策略版本不存在", 404)
+            params = payload.params_json or source.params_json
+            risk = payload.risk_params_json or source.risk_params_json
+            self.validator.validate(params, risk, source.template.param_schema, source.template.risk_schema)
+            template_id = source.template_id
+            source_version_id = source.id
         versions = await self.version_repo.version_strings(strategy_id)
         version_name = next_version(versions)
         params_hash = calc_params_hash(params, risk)
-        version = await self.version_repo.create(StrategyVersionModel(strategy_id=strategy.id, version=version_name, template_id=source.template_id, params_json=params, risk_params_json=risk, params_hash=params_hash, status=StrategyStatus.READY_FOR_BACKTEST.value, created_by=operator_id, created_source="manual", source_version_id=source.id))
-        old_status = strategy.status
-        self.state_machine.ensure_transition(old_status, StrategyStatus.READY_FOR_BACKTEST.value)
-        strategy.status = StrategyStatus.READY_FOR_BACKTEST.value
-        await self.log_repo.create(StrategyStatusLogModel(strategy_id=strategy.id, strategy_version_id=version.id, from_status=old_status, to_status=strategy.status, reason=payload.change_reason, operator_id=operator_id))
+        version = await self.version_repo.create(StrategyVersionModel(strategy_id=strategy.id, version=version_name, template_id=template_id, params_json=params, risk_params_json=risk, params_hash=params_hash, status=StrategyStatus.DRAFT.value, created_by=operator_id, created_source="manual", source_version_id=source_version_id))
+        await self.strategy_repo.set_latest_version(strategy.id, version.id)
+        await self.log_repo.create(StrategyStatusLogModel(strategy_id=strategy.id, strategy_version_id=version.id, from_status=None, to_status=version.status, reason=payload.change_reason, operator_id=operator_id))
         now = datetime.now(UTC).isoformat()
-        await self.publisher.publish(topics.STRATEGY_VERSION_CREATED, {"event_type": topics.STRATEGY_VERSION_CREATED, "strategy_id": strategy.id, "strategy_version_id": version.id, "source_version_id": source.id, "operator_id": operator_id, "created_at": now})
-        await self.publisher.publish(topics.AUDIT_EVENT, {"event_type": "STRATEGY_VERSION_CREATED", "user_id": operator_id, "resource_type": "strategy", "resource_id": strategy.id, "before": {"source_version_id": source.id}, "after": {"strategy_version_id": version.id}, "trace_id": trace_id, "created_at": now})
+        await self.publisher.publish(topics.STRATEGY_VERSION_CREATED, {"event_type": topics.STRATEGY_VERSION_CREATED, "strategy_id": strategy.id, "strategy_version_id": version.id, "source_version_id": source_version_id, "operator_id": operator_id, "created_at": now})
+        await self.publisher.publish(topics.AUDIT_EVENT, {"event_type": "STRATEGY_VERSION_CREATED", "user_id": operator_id, "resource_type": "strategy", "resource_id": strategy.id, "before": {"source_version_id": source_version_id}, "after": {"strategy_version_id": version.id}, "trace_id": trace_id, "created_at": now})
         return CreateStrategyVersionResponse(strategy_version_id=version.id, version=version.version, status=version.status, params_hash=version.params_hash)

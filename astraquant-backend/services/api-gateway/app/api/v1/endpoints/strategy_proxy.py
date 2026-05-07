@@ -60,6 +60,18 @@ async def create_version(strategy_id: str, payload: dict, request: Request):
     return await StrategyClient().request("POST", f"/strategies/{strategy_id}/versions", request, payload)
 
 
+@router.get("/api/strategies/{strategy_id}/versions")
+async def list_versions(strategy_id: str, request: Request):
+    require_permission(request, "strategy:read")
+    return await StrategyClient().request("GET", f"/strategies/{strategy_id}/versions", request)
+
+
+@router.get("/api/strategies/{strategy_id}/versions/{version_id}")
+async def get_version(strategy_id: str, version_id: str, request: Request):
+    require_permission(request, "strategy:read")
+    return await StrategyClient().request("GET", f"/strategies/{strategy_id}/versions/{version_id}", request)
+
+
 @router.post("/api/strategies/{strategy_id}/pause")
 async def pause_strategy(strategy_id: str, payload: dict, request: Request):
     require_permission(request, "strategy:update")

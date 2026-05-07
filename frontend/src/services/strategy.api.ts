@@ -1,10 +1,14 @@
 import { request } from './request';
 import type {
   CreateStrategyPayload,
+  CreateStrategyVersionPayload,
   CopyStrategyPayload,
   StrategyDetail,
   StrategyListResponse,
   StrategyTemplateResponse,
+  StrategyVersionDetail,
+  StrategyVersionListResponse,
+  UpdateStrategyVersionParamsPayload,
   UpdateStrategyPayload,
 } from '@/types/strategy';
 
@@ -29,5 +33,17 @@ export const strategyApi = {
   },
   copy(strategyId: string, payload: CopyStrategyPayload) {
     return request.post<unknown, { id: string; strategy_id: string; strategy_version_id: string; status: string }>(`/api/strategies/${strategyId}/copy`, payload);
+  },
+  versions(strategyId: string) {
+    return request.get<unknown, StrategyVersionListResponse>(`/api/strategies/${strategyId}/versions`);
+  },
+  versionDetail(strategyId: string, versionId: string) {
+    return request.get<unknown, StrategyVersionDetail>(`/api/strategies/${strategyId}/versions/${versionId}`);
+  },
+  createVersion(strategyId: string, payload: CreateStrategyVersionPayload) {
+    return request.post<unknown, { strategy_version_id: string; version: string; status: string; params_hash: string }>(`/api/strategies/${strategyId}/versions`, payload);
+  },
+  updateVersionParams(versionId: string, payload: UpdateStrategyVersionParamsPayload) {
+    return request.put<unknown, { strategy_version_id: string; status: string; params_hash: string }>(`/api/strategy-versions/${versionId}/params`, payload);
   },
 };

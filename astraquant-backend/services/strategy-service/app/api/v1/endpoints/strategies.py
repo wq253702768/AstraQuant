@@ -7,6 +7,7 @@ from app.application.services.create_strategy_service import CreateStrategyServi
 from app.application.services.create_strategy_version_service import CreateStrategyVersionService
 from app.application.services.pause_strategy_service import PauseStrategyService
 from app.application.services.query_strategy_service import QueryStrategyService
+from app.application.services.query_strategy_version_service import QueryStrategyVersionService
 from app.application.services.update_strategy_service import UpdateStrategyService
 from app.dependencies import get_db_session, get_operator_id
 from app.domain.enums.strategy_status import StrategyStatus
@@ -53,6 +54,16 @@ async def copy_strategy(strategy_id: str, payload: CopyStrategyRequest, request:
 async def create_version(strategy_id: str, payload: CreateStrategyVersionRequest, request: Request, session: AsyncSession = Depends(get_db_session), operator_id: str = Depends(get_operator_id)):
     result = await CreateStrategyVersionService(session).execute(strategy_id, payload, operator_id, getattr(request.state, "trace_id", None))
     await session.commit()
+    return success_response(result, request)
+
+@router.get("/{strategy_id}/versions")
+async def list_versions(strategy_id: str, request: Request, session: AsyncSession = Depends(get_db_session)):
+    result = await QueryStrategyVersionService(session).list_versions(strategy_id)
+    return success_response(result, request)
+
+@router.get("/{strategy_id}/versions/{version_id}")
+async def get_version(strategy_id: str, version_id: str, request: Request, session: AsyncSession = Depends(get_db_session)):
+    result = await QueryStrategyVersionService(session).get_version(strategy_id, version_id)
     return success_response(result, request)
 
 @router.post("/{strategy_id}/pause")

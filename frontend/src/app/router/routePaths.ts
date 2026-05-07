@@ -31,6 +31,7 @@ export const routePaths = {
     strategyDetail: '/strategy-center/strategies/:strategyId',
     strategyConfig: '/strategy-center/strategies/:strategyId/config',
     strategyVersions: '/strategy-center/strategies/:strategyId/versions',
+    strategyVersionConfig: '/strategy-center/strategies/:strategyId/versions/:versionId/config',
     newBacktest: '/strategy-center/backtests/new',
     validation: '/strategy-center/backtests/:taskId/validation',
     execution: '/strategy-center/backtests/:taskId/execution',

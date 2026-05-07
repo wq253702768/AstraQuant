@@ -45,6 +45,7 @@ export const router = createBrowserRouter([
       { path: 'strategy-center/strategies/:strategyId', element: <StrategyDetailPage /> },
       { path: 'strategy-center/strategies/:strategyId/config', element: <StrategyConfigPage /> },
       { path: 'strategy-center/strategies/:strategyId/versions', element: <StrategyVersionsPage /> },
+      { path: 'strategy-center/strategies/:strategyId/versions/:versionId/config', element: <StrategyConfigPage /> },
       { path: 'strategy-center/backtests/new', element: <NewBacktestPage /> },
       { path: 'strategy-center/backtests/:taskId/validation', element: <DataValidationPage /> },
       { path: 'strategy-center/backtests/:taskId/execution', element: <BacktestExecutionPage /> },

@@ -33,10 +33,35 @@ export interface StrategyListResponse {
 
 export interface StrategyVersionSummary {
   id: string;
+  strategy_id?: string;
   version: string;
   status: string;
   params_hash: string;
   created_at?: string | null;
+}
+
+export interface StrategyVersionDetail extends StrategyVersionSummary {
+  strategy_id: string;
+  params_json: Record<string, unknown>;
+  risk_params_json: Record<string, unknown>;
+  source_version_id?: string | null;
+}
+
+export interface StrategyVersionListResponse {
+  items: StrategyVersionSummary[];
+  total: number;
+}
+
+export interface CreateStrategyVersionPayload {
+  source_version_id?: string;
+  change_reason: string;
+  params_json?: Record<string, unknown>;
+  risk_params_json?: Record<string, unknown>;
+}
+
+export interface UpdateStrategyVersionParamsPayload {
+  params_json: Record<string, unknown>;
+  risk_params_json: Record<string, unknown>;
 }
 
 export interface StrategyDetail extends StrategyListItem {

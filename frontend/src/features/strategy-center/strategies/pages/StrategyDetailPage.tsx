@@ -1,4 +1,4 @@
-import { Button, Form, Input, Space, Table, Tag, message } from 'antd';
+import { Button, Form, Input, Modal, Space, Table, Tag, message } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { SettingOutlined } from '@ant-design/icons';
@@ -14,7 +14,9 @@ export function StrategyDetailPage() {
   const navigate = useNavigate();
   const [strategy, setStrategy] = useState<StrategyDetail | null>(null);
   const [editing, setEditing] = useState(false);
+  const [createVersionOpen, setCreateVersionOpen] = useState(false);
   const [form] = Form.useForm<UpdateStrategyPayload>();
+  const [versionForm] = Form.useForm<{ change_reason: string; source_version_id?: string }>();
 
   const load = async () => {
     if (!strategyId) return;
@@ -51,6 +53,14 @@ export function StrategyDetailPage() {
     await load();
   };
 
+  const handleCreateVersion = async (values: { change_reason: string; source_version_id?: string }) => {
+    const result = await strategyApi.createVersion(strategy.id, values);
+    message.success('策略版本已创建');
+    setCreateVersionOpen(false);
+    versionForm.resetFields();
+    navigate(routePaths.strategyCenter.strategyVersionConfig.replace(':strategyId', strategy.id).replace(':versionId', result.strategy_version_id));
+  };
+
   return (
     <PageContainer
       title={strategy.name}
@@ -60,6 +70,7 @@ export function StrategyDetailPage() {
           <Button icon={<SettingOutlined />} onClick={() => setEditing((value) => !value)}>
             编辑基础信息
           </Button>
+          <Button type="primary" onClick={() => setCreateVersionOpen(true)}>新建版本</Button>
           <Button danger disabled={strategy.status === 'ARCHIVED'} onClick={handleArchive}>归档策略</Button>
           <Button onClick={() => navigate('/strategy-center/strategies')}>返回列表</Button>
         </Space>
@@ -110,9 +121,28 @@ export function StrategyDetailPage() {
               { title: '版本', dataIndex: 'version' },
               { title: '状态', dataIndex: 'status', render: (value) => <Tag>{value}</Tag> },
               { title: '参数 Hash', dataIndex: 'params_hash' },
+              {
+                title: '操作',
+                render: (_, record) => (
+                  <Button type="link" onClick={() => navigate(routePaths.strategyCenter.strategyVersionConfig.replace(':strategyId', strategy.id).replace(':versionId', record.id))}>
+                    配置
+                  </Button>
+                ),
+              },
             ]}
           />
       </SectionCard>
+
+      <Modal title="新建策略版本" open={createVersionOpen} onCancel={() => setCreateVersionOpen(false)} onOk={() => versionForm.submit()} destroyOnClose>
+        <Form form={versionForm} layout="vertical" onFinish={handleCreateVersion} initialValues={{ source_version_id: strategy.latest_version_id }}>
+          <Form.Item name="source_version_id" label="来源版本">
+            <Input placeholder="默认使用当前最新版本" />
+          </Form.Item>
+          <Form.Item name="change_reason" label="变更原因" rules={[{ required: true, message: '请输入变更原因' }]}>
+            <Input.TextArea rows={3} />
+          </Form.Item>
+        </Form>
+      </Modal>
     </PageContainer>
   );
 }
