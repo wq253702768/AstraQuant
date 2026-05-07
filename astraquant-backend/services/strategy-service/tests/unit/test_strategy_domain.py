@@ -4,6 +4,8 @@ from app.domain.enums.strategy_status import StrategyStatus
 from app.domain.services.strategy_param_validator import StrategyParamValidator
 from app.domain.services.strategy_state_machine import StrategyStateMachine
 from app.domain.services.strategy_template_service import DEFAULT_RISK_PARAMS, template_seed_rows
+from app.schemas.strategy import CopyStrategyRequest, CreateStrategyRequest, UpdateStrategyRequest
+from app.schemas.strategy_version import CopyStrategyVersionRequest, PublishStrategyVersionRequest
 from app.utils.hash_utils import calc_params_hash
 
 
@@ -35,3 +37,23 @@ def test_param_validator_missing_required():
     params.pop("exchange")
     with pytest.raises(AppError):
         StrategyParamValidator().validate(params, DEFAULT_RISK_PARAMS, template["param_schema"], template["risk_schema"])
+
+
+def test_strategy_create_request_allows_optional_template_and_list_tags():
+    payload = CreateStrategyRequest(name="BTC 趋势", code="btc_trend", strategy_type="CONFIG", tags=["BTC", "趋势"])
+    assert payload.template_id is None
+    assert payload.tags == ["BTC", "趋势"]
+
+
+def test_strategy_update_and_copy_payloads():
+    update = UpdateStrategyRequest(name="新名称", tags=["EMA"])
+    copy = CopyStrategyRequest(name="副本", code="copy_code")
+    assert update.tags == ["EMA"]
+    assert copy.code == "copy_code"
+
+
+def test_publish_and_copy_version_payloads():
+    publish = PublishStrategyVersionRequest(publish_note="发布")
+    copy = CopyStrategyVersionRequest(change_reason="复制为草稿")
+    assert publish.publish_note == "发布"
+    assert copy.change_reason == "复制为草稿"

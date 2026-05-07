@@ -1,100 +1,149 @@
-import { Button, Space, Table, Tag } from 'antd';
+import { Button, Form, Input, Modal, Space, Table, Tag, message } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
-import { LineChartOutlined, RobotOutlined, SettingOutlined, ThunderboltOutlined } from '@ant-design/icons';
+import { useEffect, useState } from 'react';
+import { SettingOutlined } from '@ant-design/icons';
 import { MetricCard } from '@/components/data-display/MetricCard';
 import { SectionCard } from '@/components/data-display/SectionCard';
-import { SimpleLineChart } from '@/components/charts/SimpleLineChart';
 import { PageContainer } from '@/layouts/PageContainer/PageContainer';
 import { routePaths } from '@/app/router/routePaths';
-import { mockStrategies, mockVersionHistory } from '../../services/mockData';
+import { strategyApi } from '@/services/strategy.api';
+import type { StrategyDetail, UpdateStrategyPayload } from '@/types/strategy';
 import styles from './StrategyDetailPage.module.css';
 
 export function StrategyDetailPage() {
   const { strategyId } = useParams();
   const navigate = useNavigate();
-  const strategy = mockStrategies.find((item) => item.id === strategyId) ?? mockStrategies[0];
+  const [strategy, setStrategy] = useState<StrategyDetail | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [createVersionOpen, setCreateVersionOpen] = useState(false);
+  const [form] = Form.useForm<UpdateStrategyPayload>();
+  const [versionForm] = Form.useForm<{ change_reason: string; source_version_id?: string }>();
+
+  const load = async () => {
+    if (!strategyId) return;
+    const result = await strategyApi.detail(strategyId);
+    setStrategy(result);
+    form.setFieldsValue({
+      name: result.name,
+      description: result.description || '',
+      tags: Array.isArray(result.tags) ? result.tags : [],
+    });
+  };
+
+  useEffect(() => {
+    void load();
+  }, [strategyId]);
+
+  if (!strategy) {
+    return <PageContainer title="策略详情">加载中...</PageContainer>;
+  }
+
+  const handleUpdate = async (values: UpdateStrategyPayload & { tags?: string | string[] }) => {
+    const tags = typeof values.tags === 'string'
+      ? values.tags.split(',').map((item) => item.trim()).filter(Boolean)
+      : values.tags;
+    await strategyApi.update(strategy.id, { ...values, tags });
+    message.success('策略信息已更新');
+    setEditing(false);
+    await load();
+  };
+
+  const handleArchive = async () => {
+    await strategyApi.archive(strategy.id, '策略详情页归档');
+    message.success('策略已归档');
+    await load();
+  };
+
+  const handleCreateVersion = async (values: { change_reason: string; source_version_id?: string }) => {
+    const result = await strategyApi.createVersion(strategy.id, values);
+    message.success('策略版本已创建');
+    setCreateVersionOpen(false);
+    versionForm.resetFields();
+    navigate(routePaths.strategyCenter.strategyVersionConfig.replace(':strategyId', strategy.id).replace(':versionId', result.strategy_version_id));
+  };
 
   return (
     <PageContainer
       title={strategy.name}
-      description="汇总策略版本、最近回测、风险画像、AI复盘摘要与模拟盘准入状态。"
+      description={strategy.description || '策略基础信息、版本摘要与状态。'}
       extra={
         <Space>
-          <Button icon={<SettingOutlined />} onClick={() => navigate(`/strategy-center/strategies/${strategy.id}/config`)}>
-            配置参数
+          <Button icon={<SettingOutlined />} onClick={() => setEditing((value) => !value)}>
+            编辑基础信息
           </Button>
-          <Button onClick={() => navigate(`/strategy-center/strategies/${strategy.id}/versions`)}>查看版本</Button>
-          <Button type="primary" icon={<ThunderboltOutlined />} onClick={() => navigate(routePaths.newBacktest)}>
-            新建回测
-          </Button>
+          <Button type="primary" onClick={() => setCreateVersionOpen(true)}>新建版本</Button>
+          <Button danger disabled={strategy.status === 'ARCHIVED'} onClick={handleArchive}>归档策略</Button>
+          <Button onClick={() => navigate('/strategy-center/strategies')}>返回列表</Button>
         </Space>
       }
     >
       <section className={styles.hero}>
         <div>
           <Space wrap>
-            <Tag color="blue">{strategy.currentVersion}</Tag>
-            <Tag>{strategy.instId}</Tag>
-            <Tag>{strategy.timeframe}</Tag>
-            <Tag color="purple">{strategy.type}</Tag>
-            <Tag color="gold">{strategy.riskLevel}</Tag>
+            <Tag color={strategy.status === 'ARCHIVED' ? 'default' : 'green'}>{strategy.status}</Tag>
+            <Tag color="purple">{strategy.strategy_type}</Tag>
+            {(Array.isArray(strategy.tags) ? strategy.tags : []).map((tag) => <Tag key={tag}>{tag}</Tag>)}
           </Space>
-          <p>
-            当前版本最近回测表现稳健，最大回撤处于可接受区间。建议进入模拟盘验证，不建议直接实盘部署。
-          </p>
+          <p>策略编码：{strategy.code}</p>
         </div>
-        <div className={styles.admission}>模拟盘准入：允许</div>
+        <div className={styles.admission}>最新版本：{strategy.latest_version_id || '暂无'}</div>
       </section>
 
+      {editing && (
+        <SectionCard title="编辑基础信息">
+          <Form form={form} layout="vertical" onFinish={handleUpdate}>
+            <Form.Item name="name" label="策略名称" rules={[{ required: true, message: '请输入策略名称' }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item name="description" label="策略说明">
+              <Input.TextArea rows={3} />
+            </Form.Item>
+            <Form.Item name="tags" label="标签">
+              <Input placeholder="多个标签可在 Part 2 中增强为标签选择器" />
+            </Form.Item>
+            <Button type="primary" htmlType="submit">保存</Button>
+          </Form>
+        </SectionCard>
+      )}
+
       <div className={styles.metricGrid}>
-        <MetricCard title="最近收益率" value={`${strategy.totalReturn.toFixed(2)}%`} tone="success" />
-        <MetricCard title="最大回撤" value={`${strategy.maxDrawdown.toFixed(2)}%`} tone="danger" />
-        <MetricCard title="胜率" value={`${strategy.winRate.toFixed(2)}%`} tone="success" />
-        <MetricCard title="Profit Factor" value="1.78" tone="primary" />
-        <MetricCard title="策略评分" value={`${strategy.score.toFixed(1)}/100`} tone="primary" />
-        <MetricCard title="默认杠杆" value={strategy.leverage} suffix="x" />
+        <MetricCard title="策略状态" value={strategy.status} tone={strategy.status === 'ARCHIVED' ? 'warning' : 'success'} />
+        <MetricCard title="策略类型" value={strategy.strategy_type} />
+        <MetricCard title="版本数量" value={strategy.versions.length} tone="primary" />
       </div>
 
-      <div className={styles.twoColumns}>
-        <SectionCard title="最近回测净值曲线" extra="策略净值 vs 基准">
-          <SimpleLineChart color="#1677ff" height={260} />
-        </SectionCard>
-        <SectionCard title="风险摘要" extra={<RobotOutlined />}>
-          <div className={styles.riskList}>
-            <div><span>最大连续亏损</span><strong>6 笔</strong></div>
-            <div><span>资金费影响</span><strong className={styles.positive}>+582.37 USDT</strong></div>
-            <div><span>滑点成本</span><strong className={styles.negative}>-862.14 USDT</strong></div>
-            <div><span>准入建议</span><strong className={styles.positive}>进入模拟盘</strong></div>
-          </div>
-        </SectionCard>
-      </div>
-
-      <div className={styles.threeColumns}>
-        <SectionCard title="版本历史摘要">
+      <SectionCard title="版本历史摘要">
           <Table
             size="small"
             pagination={false}
             rowKey="id"
-            dataSource={mockVersionHistory.slice(0, 3)}
+            dataSource={strategy.versions}
             columns={[
               { title: '版本', dataIndex: 'version' },
-              { title: '状态', dataIndex: 'status', render: (value) => <Tag color={value === '当前版本' ? 'blue' : 'green'}>{value}</Tag> },
+              { title: '状态', dataIndex: 'status', render: (value) => <Tag>{value}</Tag> },
+              { title: '参数 Hash', dataIndex: 'params_hash' },
+              {
+                title: '操作',
+                render: (_, record) => (
+                  <Button type="link" onClick={() => navigate(routePaths.strategyCenter.strategyVersionConfig.replace(':strategyId', strategy.id).replace(':versionId', record.id))}>
+                    配置
+                  </Button>
+                ),
+              },
             ]}
           />
-        </SectionCard>
-        <SectionCard title="最近回测任务">
-          <div className={styles.timeline}>
-            <div>BT-20240630-001 · 已完成 · +12.8%</div>
-            <div>BT-20240605-153208 · 已完成 · +34.21%</div>
-            <div>BT-20240517-00123 · AI复盘完成</div>
-          </div>
-        </SectionCard>
-        <SectionCard title="AI复盘摘要" extra={<LineChartOutlined />}>
-          <p className={styles.aiText}>
-            策略在趋势行情中收益贡献明显，但震荡区间存在假突破亏损。建议提高突破确认阈值，降低杠杆，并继续执行模拟盘验证。
-          </p>
-        </SectionCard>
-      </div>
+      </SectionCard>
+
+      <Modal title="新建策略版本" open={createVersionOpen} onCancel={() => setCreateVersionOpen(false)} onOk={() => versionForm.submit()} destroyOnClose>
+        <Form form={versionForm} layout="vertical" onFinish={handleCreateVersion} initialValues={{ source_version_id: strategy.latest_version_id }}>
+          <Form.Item name="source_version_id" label="来源版本">
+            <Input placeholder="默认使用当前最新版本" />
+          </Form.Item>
+          <Form.Item name="change_reason" label="变更原因" rules={[{ required: true, message: '请输入变更原因' }]}>
+            <Input.TextArea rows={3} />
+          </Form.Item>
+        </Form>
+      </Modal>
     </PageContainer>
   );
 }

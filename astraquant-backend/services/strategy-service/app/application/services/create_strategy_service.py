@@ -24,16 +24,17 @@ class CreateStrategyService:
         self.publisher = EventPublisher()
 
     async def execute(self, payload: CreateStrategyRequest, operator_id: str, trace_id: str | None) -> CreateStrategyResponse:
-        template = await self.template_repo.get(payload.template_id)
+        template = await self.template_repo.get(payload.template_id) if payload.template_id else await self.template_repo.first_enabled()
         if template is None or not template.enabled:
             raise AppError("STRATEGY_TEMPLATE_NOT_FOUND", "策略模板不存在或未启用", 404)
         if await self.strategy_repo.code_exists(payload.code):
-            raise AppError("STRATEGY_CODE_EXISTS", "策略编码已存在", 409)
-        strategy = await self.strategy_repo.create(StrategyModel(name=payload.name, code=payload.code, strategy_type=payload.strategy_type, description=payload.description, status=StrategyStatus.DRAFT.value, tags=payload.tags, created_by=operator_id))
+            raise AppError("STRATEGY_CODE_ALREADY_EXISTS", "策略编码已存在", 409)
+        strategy = await self.strategy_repo.create(StrategyModel(name=payload.name, code=payload.code, strategy_type=payload.strategy_type, description=payload.description, status=StrategyStatus.ACTIVE.value, tags=payload.tags, created_by=operator_id))
         params_hash = calc_params_hash(template.default_params, DEFAULT_RISK_PARAMS)
         version = await self.version_repo.create(StrategyVersionModel(strategy_id=strategy.id, version="v1.0", template_id=template.id, params_json=template.default_params, risk_params_json=DEFAULT_RISK_PARAMS, params_hash=params_hash, status=StrategyStatus.DRAFT.value, created_by=operator_id, created_source="manual"))
+        await self.strategy_repo.set_latest_version(strategy.id, version.id)
         await self.log_repo.create(StrategyStatusLogModel(strategy_id=strategy.id, strategy_version_id=version.id, from_status=None, to_status=StrategyStatus.DRAFT.value, reason="创建策略", operator_id=operator_id))
         now = datetime.now(UTC).isoformat()
         await self.publisher.publish(topics.STRATEGY_CREATED, {"event_type": topics.STRATEGY_CREATED, "strategy_id": strategy.id, "strategy_version_id": version.id, "operator_id": operator_id, "created_at": now})
         await self.publisher.publish(topics.AUDIT_EVENT, {"event_type": "STRATEGY_CREATED", "user_id": operator_id, "resource_type": "strategy", "resource_id": strategy.id, "before": None, "after": {"code": strategy.code}, "trace_id": trace_id, "created_at": now})
-        return CreateStrategyResponse(strategy_id=strategy.id, strategy_version_id=version.id, status=strategy.status)
+        return CreateStrategyResponse(id=strategy.id, strategy_id=strategy.id, strategy_version_id=version.id, name=strategy.name, code=strategy.code, status=strategy.status)

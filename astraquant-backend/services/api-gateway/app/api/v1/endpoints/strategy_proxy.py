@@ -36,10 +36,52 @@ async def get_strategy(strategy_id: str, request: Request):
     return await StrategyClient().request("GET", f"/strategies/{strategy_id}", request)
 
 
+@router.put("/api/strategies/{strategy_id}")
+async def update_strategy(strategy_id: str, payload: dict, request: Request):
+    require_permission(request, "strategy:update")
+    return await StrategyClient().request("PUT", f"/strategies/{strategy_id}", request, payload)
+
+
+@router.post("/api/strategies/{strategy_id}/archive")
+async def archive_strategy(strategy_id: str, payload: dict, request: Request):
+    require_permission(request, "strategy:update")
+    return await StrategyClient().request("POST", f"/strategies/{strategy_id}/archive", request, payload)
+
+
+@router.post("/api/strategies/{strategy_id}/copy")
+async def copy_strategy(strategy_id: str, payload: dict, request: Request):
+    require_permission(request, "strategy:create")
+    return await StrategyClient().request("POST", f"/strategies/{strategy_id}/copy", request, payload)
+
+
 @router.post("/api/strategies/{strategy_id}/versions")
 async def create_version(strategy_id: str, payload: dict, request: Request):
     require_permission(request, "strategy:update")
     return await StrategyClient().request("POST", f"/strategies/{strategy_id}/versions", request, payload)
+
+
+@router.get("/api/strategies/{strategy_id}/versions")
+async def list_versions(strategy_id: str, request: Request):
+    require_permission(request, "strategy:read")
+    return await StrategyClient().request("GET", f"/strategies/{strategy_id}/versions", request)
+
+
+@router.get("/api/strategies/{strategy_id}/versions/{version_id}")
+async def get_version(strategy_id: str, version_id: str, request: Request):
+    require_permission(request, "strategy:read")
+    return await StrategyClient().request("GET", f"/strategies/{strategy_id}/versions/{version_id}", request)
+
+
+@router.post("/api/strategies/{strategy_id}/versions/{version_id}/publish")
+async def publish_version(strategy_id: str, version_id: str, payload: dict, request: Request):
+    require_permission(request, "strategy:update")
+    return await StrategyClient().request("POST", f"/strategies/{strategy_id}/versions/{version_id}/publish", request, payload)
+
+
+@router.post("/api/strategies/{strategy_id}/versions/{version_id}/copy")
+async def copy_version(strategy_id: str, version_id: str, payload: dict, request: Request):
+    require_permission(request, "strategy:update")
+    return await StrategyClient().request("POST", f"/strategies/{strategy_id}/versions/{version_id}/copy", request, payload)
 
 
 @router.post("/api/strategies/{strategy_id}/pause")

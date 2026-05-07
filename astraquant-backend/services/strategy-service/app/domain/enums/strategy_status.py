@@ -1,6 +1,9 @@
 from enum import StrEnum
 
 class StrategyStatus(StrEnum):
+    ACTIVE = "ACTIVE"
+    ARCHIVED = "ARCHIVED"
+    PUBLISHED = "PUBLISHED"
     DRAFT = "DRAFT"
     READY_FOR_BACKTEST = "READY_FOR_BACKTEST"
     BACKTESTING = "BACKTESTING"
