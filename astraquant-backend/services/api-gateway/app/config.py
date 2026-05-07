@@ -22,6 +22,7 @@ class Settings:
     order_executor_service_url: str = os.getenv("ORDER_EXECUTOR_SERVICE_URL", "http://localhost:8018")
     live_risk_guard_service_url: str = os.getenv("LIVE_RISK_GUARD_SERVICE_URL", "http://localhost:8019")
     live_trading_monitor_service_url: str = os.getenv("LIVE_TRADING_MONITOR_SERVICE_URL", "http://localhost:8020")
+    live_monitor_service_url: str = os.getenv("LIVE_MONITOR_SERVICE_URL", os.getenv("LIVE_TRADING_MONITOR_SERVICE_URL", "http://localhost:8020"))
     alert_center_service_url: str = os.getenv("ALERT_CENTER_SERVICE_URL", "http://localhost:8021")
     audit_center_service_url: str = os.getenv("AUDIT_CENTER_SERVICE_URL", "http://localhost:8022")
     strategy_lifecycle_center_url: str = os.getenv("STRATEGY_LIFECYCLE_CENTER_URL", "http://localhost:8023")

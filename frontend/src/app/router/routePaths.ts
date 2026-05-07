@@ -53,6 +53,7 @@ export const routePaths = {
     auditLogs: '/system-settings/audit-logs',
     users: '/system-settings/users',
     roles: '/system-settings/roles',
+    password: '/system-settings/password',
     notifications: '/system-settings/notifications',
   },
 } as const;

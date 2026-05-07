@@ -1,52 +1,127 @@
 import { create } from 'zustand';
 
-export interface UserInfo {
-  id: string;
-  name: string;
-  role: string;
-  avatar?: string;
-}
+import { authApi } from '@/services/auth.api';
+import type { CurrentUser, LoginRequest } from '@/types/auth';
+import {
+  clearAuthStorage,
+  getStoredAccessToken,
+  getStoredRefreshToken,
+  getStoredUser,
+  setAuthTokens,
+  setStoredUser,
+} from '@/utils/token';
 
 interface AuthState {
-  token: string | null;
-  user: UserInfo | null;
+  accessToken: string | null;
+  refreshToken: string | null;
+  user: CurrentUser | null;
   permissions: string[];
   isAuthenticated: boolean;
-  loginAsDemo: () => void;
-  logout: () => void;
+  isHydrating: boolean;
+  isLoading: boolean;
+  login: (payload: LoginRequest) => Promise<void>;
+  loadCurrentUser: () => Promise<void>;
+  logout: () => Promise<void>;
+  clearSession: () => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  token: localStorage.getItem('astraquant_token'),
-  user: localStorage.getItem('astraquant_token')
-    ? {
-        id: 'u-demo',
-        name: '张三',
-        role: '量化研究员',
-      }
-    : null,
-  permissions: ['*'],
-  isAuthenticated: Boolean(localStorage.getItem('astraquant_token')),
-  loginAsDemo: () => {
-    localStorage.setItem('astraquant_token', 'demo-token');
-    set({
-      token: 'demo-token',
-      user: {
-        id: 'u-demo',
-        name: '张三',
-        role: '量化研究员',
-      },
-      permissions: ['*'],
-      isAuthenticated: true,
-    });
+function permissionsOf(user: CurrentUser | null): string[] {
+  return user?.permissions ?? [];
+}
+
+const storedAccessToken = getStoredAccessToken();
+const storedRefreshToken = getStoredRefreshToken();
+const storedUser = getStoredUser();
+
+export const useAuthStore = create<AuthState>((set, get) => ({
+  accessToken: storedAccessToken,
+  refreshToken: storedRefreshToken,
+  user: storedUser,
+  permissions: permissionsOf(storedUser),
+  isAuthenticated: Boolean(storedAccessToken),
+  isHydrating: false,
+  isLoading: false,
+
+  login: async (payload) => {
+    set({ isLoading: true });
+    try {
+      const result = await authApi.login(payload);
+      setAuthTokens(result.access_token, result.refresh_token);
+
+      const user = await authApi.me();
+      setStoredUser(user);
+      set({
+        accessToken: result.access_token,
+        refreshToken: result.refresh_token,
+        user,
+        permissions: permissionsOf(user),
+        isAuthenticated: true,
+        isLoading: false,
+      });
+    } catch (error) {
+      clearAuthStorage();
+      set({
+        accessToken: null,
+        refreshToken: null,
+        user: null,
+        permissions: [],
+        isAuthenticated: false,
+        isLoading: false,
+      });
+      throw error;
+    }
   },
-  logout: () => {
-    localStorage.removeItem('astraquant_token');
+
+  loadCurrentUser: async () => {
+    if (!get().accessToken) {
+      return;
+    }
+    set({ isHydrating: true });
+    try {
+      const user = await authApi.me();
+      setStoredUser(user);
+      set({
+        user,
+        permissions: permissionsOf(user),
+        isAuthenticated: true,
+        isHydrating: false,
+      });
+    } catch (error) {
+      clearAuthStorage();
+      set({
+        accessToken: null,
+        refreshToken: null,
+        user: null,
+        permissions: [],
+        isAuthenticated: false,
+        isHydrating: false,
+        isLoading: false,
+      });
+      throw error;
+    }
+  },
+
+  clearSession: () => {
+    clearAuthStorage();
     set({
-      token: null,
+      accessToken: null,
+      refreshToken: null,
       user: null,
       permissions: [],
       isAuthenticated: false,
+      isHydrating: false,
+      isLoading: false,
     });
+  },
+
+  logout: async () => {
+    const refreshToken = get().refreshToken;
+    try {
+      if (refreshToken) {
+        await authApi.logout({ refresh_token: refreshToken });
+      }
+    } finally {
+      get().clearSession();
+    }
   },
 }));

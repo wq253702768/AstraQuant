@@ -19,6 +19,7 @@ import {
   ThunderboltOutlined,
   ToolOutlined,
   UserSwitchOutlined,
+  LockOutlined,
 } from '@ant-design/icons';
 import { routePaths } from '@/app/router/routePaths';
 
@@ -69,6 +70,7 @@ export const appMenuItems: AppMenuItem[] = [
       { key: settings.aiModels, icon: <RobotOutlined />, label: 'AI模型配置' },
       { key: settings.risk, icon: <SafetyCertificateOutlined />, label: '风控参数' },
       { key: settings.auditLogs, icon: <AuditOutlined />, label: '审计日志' },
+      { key: settings.password, icon: <LockOutlined />, label: '修改密码' },
       { key: settings.users, icon: <UserSwitchOutlined />, label: '用户管理' },
       { key: settings.roles, icon: <SafetyCertificateOutlined />, label: '角色权限' },
       { key: settings.notifications, icon: <ControlOutlined />, label: '通知设置' },

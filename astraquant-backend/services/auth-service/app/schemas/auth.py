@@ -7,6 +7,13 @@ class LoginRequest(BaseModel):
 class RefreshTokenRequest(BaseModel):
     refresh_token: str
 
+class LogoutRequest(BaseModel):
+    refresh_token: str
+
+class ChangePasswordRequest(BaseModel):
+    old_password: str = Field(min_length=1)
+    new_password: str = Field(min_length=8)
+
 class UserTokenInfo(BaseModel):
     id: str
     username: str
@@ -21,4 +28,8 @@ class LoginResponse(BaseModel):
 
 class RefreshTokenResponse(BaseModel):
     access_token: str
+    refresh_token: str
     expires_in: int
+
+class OperationSuccessResponse(BaseModel):
+    success: bool

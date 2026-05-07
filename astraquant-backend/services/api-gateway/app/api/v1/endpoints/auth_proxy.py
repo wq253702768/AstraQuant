@@ -11,6 +11,14 @@ async def login(payload: dict, request: Request):
 async def refresh(payload: dict, request: Request):
     return await AuthClient().refresh(payload, request)
 
+@router.post("/logout")
+async def logout(payload: dict, request: Request):
+    return await AuthClient().logout(payload, request)
+
+@router.put("/password")
+async def change_password(payload: dict, request: Request):
+    return await AuthClient().change_password(payload, request)
+
 @router.get("/me")
 async def me(request: Request):
     authorization = request.headers.get("Authorization", "")

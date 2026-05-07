@@ -131,3 +131,18 @@ services:
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
     ports:
       - "${API_GATEWAY_PORT:-8000}:8000"
+    depends_on:
+      - auth-service
+
+  frontend-web:
+    build:
+      context: ..
+      dockerfile: frontend/Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://47.239.90.234:8000}
+    container_name: astraquant-frontend-web
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-5173}:80"
+    depends_on:
+      - api-gateway

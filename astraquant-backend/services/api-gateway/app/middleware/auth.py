@@ -5,6 +5,7 @@ from astra_common.errors import AppError, ErrorCode
 from astra_common.response import error_response
 from astra_common.security import decode_jwt
 from app.config import settings
+from app.infrastructure.redis_client import create_redis_client
 
 PUBLIC_PATHS = {"/health", "/api/auth/login", "/api/auth/refresh", "/docs", "/openapi.json", "/redoc"}
 PUBLIC_PREFIXES = ("/api/ws/",)
@@ -22,5 +23,20 @@ class AuthMiddleware(BaseHTTPMiddleware):
             payload = decode_jwt(token, settings.jwt_secret)
         except AppError as exc:
             return JSONResponse(status_code=exc.status_code, content=error_response(exc.code, exc.message, trace_id).model_dump())
+        if payload.get("token_type") != "access":
+            return JSONResponse(status_code=401, content=error_response(ErrorCode.UNAUTHORIZED.value, "Access Token 无效", trace_id).model_dump())
+        if await self._blacklisted(payload):
+            return JSONResponse(status_code=401, content=error_response(ErrorCode.UNAUTHORIZED.value, "Token 已失效", trace_id).model_dump())
         request.state.user = {"id": payload.get("sub"), "roles": payload.get("roles", []), "permissions": payload.get("permissions", [])}
         return await call_next(request)
+
+    async def _blacklisted(self, payload: dict) -> bool:
+        if not payload.get("jti"):
+            return False
+        client = create_redis_client()
+        if client is None:
+            return False
+        try:
+            return bool(await client.exists(f"auth:blacklist:access:{payload['jti']}"))
+        finally:
+            await client.aclose()
