@@ -41,4 +41,8 @@ echo "==> Running auth-service migrations and seed"
 ssh "${SSH_OPTS[@]}" "$REMOTE" "cd '$ASTRA_STAGING_APP_DIR/astraquant-backend' && $COMPOSE run --rm auth-service alembic upgrade head"
 ssh "${SSH_OPTS[@]}" "$REMOTE" "cd '$ASTRA_STAGING_APP_DIR/astraquant-backend' && $COMPOSE run --rm -v '$ASTRA_STAGING_APP_DIR/astraquant-backend/scripts:/scripts:ro' auth-service python /scripts/create_admin_user.py || true"
 
+echo "==> Running strategy-service migrations and seed"
+ssh "${SSH_OPTS[@]}" "$REMOTE" "cd '$ASTRA_STAGING_APP_DIR/astraquant-backend' && $COMPOSE run --rm strategy-service alembic upgrade head"
+ssh "${SSH_OPTS[@]}" "$REMOTE" "cd '$ASTRA_STAGING_APP_DIR/astraquant-backend' && $COMPOSE run --rm -v '$ASTRA_STAGING_APP_DIR/astraquant-backend/scripts:/scripts:ro' strategy-service python /scripts/seed_strategy_templates.py"
+
 echo "==> Sprint 3 Part 1 deployment finished"

@@ -27,6 +27,12 @@ services:
       timeout: 5s
       retries: 5
 
+  nats:
+    image: nats:latest
+    container_name: astraquant-nats
+    restart: unless-stopped
+    command: ["-js"]
+
   auth-service:
     build:
       context: ../..
@@ -73,6 +79,29 @@ services:
       postgres:
         condition: service_healthy
 
+  strategy-service:
+    build:
+      context: ../..
+      dockerfile: services/strategy-service/Dockerfile
+    container_name: astraquant-strategy-service
+    restart: unless-stopped
+    environment:
+      SERVICE_NAME: strategy-service
+      ENV: staging
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-astra}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-astraquant}
+      REDIS_URL: redis://redis:6379/0
+      NATS_URL: nats://nats:4222
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    ports:
+      - "${STRATEGY_SERVICE_PORT:-8002}:8002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nats:
+        condition: service_started
+
   api-gateway:
     build:
       context: ../..
@@ -83,12 +112,14 @@ services:
       SERVICE_NAME: api-gateway
       ENV: staging
       AUTH_SERVICE_URL: http://auth-service:8001
+      STRATEGY_SERVICE_URL: http://strategy-service:8002
       EXCHANGE_ACCESS_GATEWAY_URL: http://exchange-access-gateway:8010
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       REDIS_URL: redis://redis:6379/0
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
     depends_on:
       - auth-service
+      - strategy-service
       - exchange-access-gateway
 
   frontend-web:
