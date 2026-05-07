@@ -80,11 +80,11 @@ request_json GET "$GATEWAY_URL/api/exchange-public/exchanges/OKX/funding-rate?sy
 assert_code "$FUNDING" SUCCESS "okx funding rate"
 
 KLINES="$TMP_DIR/klines.json"
-request_json GET "$GATEWAY_URL/api/exchange-public/exchanges/OKX/klines?symbol=BTC-USDT-SWAP\&timeframe=5m\&limit=5" "$KLINES" "$TOKEN"
+request_json GET "$GATEWAY_URL/api/exchange-public/exchanges/OKX/klines?symbol=BTC-USDT-SWAP&timeframe=5m&limit=5" "$KLINES" "$TOKEN"
 assert_code "$KLINES" SUCCESS "okx klines"
 
 HISTORY_FUNDING="$TMP_DIR/funding-history.json"
-request_json GET "$GATEWAY_URL/api/exchange-public/exchanges/OKX/funding-rate-history?symbol=BTC-USDT-SWAP\&limit=5" "$HISTORY_FUNDING" "$TOKEN"
+request_json GET "$GATEWAY_URL/api/exchange-public/exchanges/OKX/funding-rate-history?symbol=BTC-USDT-SWAP&limit=5" "$HISTORY_FUNDING" "$TOKEN"
 assert_code "$HISTORY_FUNDING" SUCCESS "okx funding history"
 
 echo "[INFO] Sprint 3 Part 1 exchange public acceptance passed"
