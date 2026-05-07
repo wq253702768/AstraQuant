@@ -35,6 +35,12 @@ def test_market_data_permission_allows():
     require_permission(request, "market_data:read")
 
 
+def test_strategy_update_permission_allows_archive_and_update():
+    request = FakeRequest()
+    request.state.user = {"permissions": ["strategy:update"]}
+    require_permission(request, "strategy:update")
+
+
 def test_admin_wildcard_permission_allows_auth_me_proxy():
     request = FakeRequest()
     request.state.user = {"permissions": ["*"]}
