@@ -8,6 +8,7 @@ import {
   DeploymentUnitOutlined,
   FileTextOutlined,
   FundProjectionScreenOutlined,
+  AppstoreOutlined,
   RobotOutlined,
   SafetyCertificateOutlined,
   SettingOutlined,
@@ -43,6 +44,7 @@ export const appMenuItems: AppMenuItem[] = [
     label: '策略中心',
     children: [
       { key: strategy.strategies, icon: <FundProjectionScreenOutlined />, label: '策略列表' },
+      { key: strategy.templates, icon: <AppstoreOutlined />, label: '策略模板' },
       { key: 'strategy-config-entry', icon: <SlidersOutlined />, label: '策略配置（从详情进入）', disabled: true },
       { key: 'strategy-versions-entry', icon: <HistoryOutlined />, label: '策略版本（从详情进入）', disabled: true },
       { key: strategy.newBacktest, icon: <PlayCircleOutlined />, label: '新建回测（待验收）', disabled: true },

@@ -45,19 +45,36 @@ export function StrategyListPage() {
   }, []);
 
   const handleArchive = async (record: StrategyListItem) => {
-    await strategyApi.archive(record.id, '策略中心页面归档');
-    message.success('策略已归档');
-    await load();
+    Modal.confirm({
+      title: '确认归档该策略？',
+      content: '归档后该策略不再建议用于后续回测、模拟盘或实盘流程。已发布版本和历史记录仍会保留。',
+      okText: '确认归档',
+      okButtonProps: { danger: true },
+      cancelText: '取消',
+      onOk: async () => {
+        await strategyApi.archive(record.id, '策略中心页面归档');
+        message.success('策略已归档');
+        await load();
+      },
+    });
   };
 
   const handleCopy = async (record: StrategyListItem) => {
-    const suffix = Date.now().toString().slice(-5);
-    await strategyApi.copy(record.id, {
-      name: `${record.name} - 副本`,
-      code: `${record.code}_copy_${suffix}`,
+    Modal.confirm({
+      title: '确认复制该策略？',
+      content: '系统将复制策略基础信息，并基于最新版本生成一个新的草稿版本。',
+      okText: '确认复制',
+      cancelText: '取消',
+      onOk: async () => {
+        const suffix = Date.now().toString().slice(-5);
+        await strategyApi.copy(record.id, {
+          name: `${record.name} - 副本`,
+          code: `${record.code}_copy_${suffix}`,
+        });
+        message.success('策略已复制');
+        await load();
+      },
     });
-    message.success('策略已复制');
-    await load();
   };
 
   const columns: ColumnsType<StrategyListItem> = useMemo(
@@ -108,11 +125,19 @@ export function StrategyListPage() {
   );
 
   const handleCreate = async (values: CreateStrategyPayload) => {
-    await strategyApi.create({ ...values, tags: values.tags ?? [], strategy_type: values.strategy_type || 'CONFIG' });
-    message.success('策略创建成功');
-    setOpen(false);
-    form.resetFields();
-    await load();
+    Modal.confirm({
+      title: '确认创建策略？',
+      content: '系统将基于所选模板创建策略，并生成初始草稿版本。',
+      okText: '确认创建',
+      cancelText: '取消',
+      onOk: async () => {
+        await strategyApi.create({ ...values, tags: values.tags ?? [], strategy_type: values.strategy_type || 'CONFIG' });
+        message.success('策略创建成功');
+        setOpen(false);
+        form.resetFields();
+        await load();
+      },
+    });
   };
 
   return (

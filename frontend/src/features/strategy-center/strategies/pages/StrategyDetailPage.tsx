@@ -42,24 +42,49 @@ export function StrategyDetailPage() {
     const tags = typeof values.tags === 'string'
       ? values.tags.split(',').map((item) => item.trim()).filter(Boolean)
       : values.tags;
-    await strategyApi.update(strategy.id, { ...values, tags });
-    message.success('策略信息已更新');
-    setEditing(false);
-    await load();
+    Modal.confirm({
+      title: '确认保存策略基础信息？',
+      content: '该操作不会影响已发布版本，但会更新策略展示信息。',
+      okText: '确认保存',
+      cancelText: '取消',
+      onOk: async () => {
+        await strategyApi.update(strategy.id, { ...values, tags });
+        message.success('策略信息已更新');
+        setEditing(false);
+        await load();
+      },
+    });
   };
 
   const handleArchive = async () => {
-    await strategyApi.archive(strategy.id, '策略详情页归档');
-    message.success('策略已归档');
-    await load();
+    Modal.confirm({
+      title: '确认归档该策略？',
+      content: '归档后该策略不再建议用于后续回测、模拟盘或实盘流程。已发布版本和历史记录仍会保留。',
+      okText: '确认归档',
+      okButtonProps: { danger: true },
+      cancelText: '取消',
+      onOk: async () => {
+        await strategyApi.archive(strategy.id, '策略详情页归档');
+        message.success('策略已归档');
+        await load();
+      },
+    });
   };
 
   const handleCreateVersion = async (values: { change_reason: string; source_version_id?: string }) => {
-    const result = await strategyApi.createVersion(strategy.id, values);
-    message.success('策略版本已创建');
-    setCreateVersionOpen(false);
-    versionForm.resetFields();
-    navigate(routePaths.strategyCenter.strategyVersionConfig.replace(':strategyId', strategy.id).replace(':versionId', result.strategy_version_id));
+    Modal.confirm({
+      title: '确认创建新策略版本？',
+      content: '系统将基于来源版本复制配置，并生成新的草稿版本。',
+      okText: '确认创建',
+      cancelText: '取消',
+      onOk: async () => {
+        const result = await strategyApi.createVersion(strategy.id, values);
+        message.success('策略版本已创建');
+        setCreateVersionOpen(false);
+        versionForm.resetFields();
+        navigate(routePaths.strategyCenter.strategyVersionConfig.replace(':strategyId', strategy.id).replace(':versionId', result.strategy_version_id));
+      },
+    });
   };
 
   return (
