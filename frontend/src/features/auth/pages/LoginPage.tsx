@@ -3,6 +3,7 @@ import { Button, Checkbox, Form, Input, Select, Typography, message } from 'antd
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
 import { routePaths } from '@/app/router/routePaths';
+import { ApiError } from '@/services/request';
 import styles from './LoginPage.module.css';
 
 const { Text, Title } = Typography;
@@ -17,7 +18,12 @@ export function LoginPage() {
       await login(values);
       navigate(routePaths.dashboard, { replace: true });
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '登录失败，请检查账号和密码';
+      const errorMessage =
+        error instanceof ApiError && error.code === 'AUTH_USER_LOCKED'
+          ? '登录失败次数过多，请稍后再试'
+          : error instanceof Error
+            ? error.message
+            : '登录失败，请检查账号和密码';
       message.error(errorMessage);
     }
   };

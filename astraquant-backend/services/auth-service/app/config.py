@@ -10,6 +10,9 @@ class Settings:
     jwt_secret: str = os.getenv("JWT_SECRET", "change_me")
     jwt_access_expire_seconds: int = int(os.getenv("JWT_ACCESS_EXPIRE_SECONDS", "7200"))
     jwt_refresh_expire_seconds: int = int(os.getenv("JWT_REFRESH_EXPIRE_SECONDS", "604800"))
+    login_failed_limit: int = int(os.getenv("LOGIN_FAILED_LIMIT", "5"))
+    login_failed_window_seconds: int = int(os.getenv("LOGIN_FAILED_WINDOW_SECONDS", "300"))
+    login_lock_seconds: int = int(os.getenv("LOGIN_LOCK_SECONDS", "900"))
     log_level: str = os.getenv("LOG_LEVEL", "INFO")
 
 settings = Settings()
