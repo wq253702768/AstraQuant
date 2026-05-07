@@ -125,7 +125,7 @@ assert_code "$CHANGE" "SUCCESS" "change password succeeds"
 
 OLD_LOGIN="$TMP_DIR/old-login.json"
 post_json "$GATEWAY_URL/api/auth/login" "{\"username\":\"$USERNAME\",\"password\":\"$OLD_PASSWORD\"}" "$OLD_LOGIN"
-assert_code "$OLD_LOGIN" "UNAUTHORIZED" "old password rejected"
+assert_code "$OLD_LOGIN" "AUTH_INVALID_CREDENTIALS" "old password rejected"
 
 REFRESH_AFTER_CHANGE="$TMP_DIR/refresh-after-change.json"
 post_json "$GATEWAY_URL/api/auth/refresh" "{\"refresh_token\":\"$REFRESH3\"}" "$REFRESH_AFTER_CHANGE"
