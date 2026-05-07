@@ -28,22 +28,33 @@ export function StrategyConfigPage() {
   const { strategyId, versionId } = useParams();
   const navigate = useNavigate();
   const [version, setVersion] = useState<StrategyVersionDetail | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [form] = Form.useForm<VersionConfigForm>();
 
   const load = async () => {
     if (!strategyId) return;
-    let targetVersionId = versionId;
-    if (!targetVersionId) {
-      const versions = await strategyApi.versions(strategyId);
-      targetVersionId = versions.items[versions.items.length - 1]?.id;
+    setError(null);
+    try {
+      let targetVersionId = versionId;
+      if (!targetVersionId) {
+        const versions = await strategyApi.versions(strategyId);
+        targetVersionId = versions.items[versions.items.length - 1]?.id;
+      }
+      if (!targetVersionId) {
+        setError('该策略暂无可配置版本，请先从策略详情中新建版本。');
+        return;
+      }
+      const result = await strategyApi.versionDetail(strategyId, targetVersionId);
+      setVersion(result);
+      form.setFieldsValue({
+        params_json: formatJson(result.params_json),
+        risk_params_json: formatJson(result.risk_params_json),
+      });
+    } catch (caught) {
+      const messageText = caught instanceof Error ? caught.message : '策略配置加载失败';
+      setError(messageText);
+      setVersion(null);
     }
-    if (!targetVersionId) return;
-    const result = await strategyApi.versionDetail(strategyId, targetVersionId);
-    setVersion(result);
-    form.setFieldsValue({
-      params_json: formatJson(result.params_json),
-      risk_params_json: formatJson(result.risk_params_json),
-    });
   };
 
   useEffect(() => {
@@ -84,8 +95,21 @@ export function StrategyConfigPage() {
     navigate(`/strategy-center/strategies/${strategyId}/versions/${result.strategy_version_id}/config`);
   };
 
+  if (error) {
+    return (
+      <PageContainer title="策略配置" description="策略配置必须基于真实策略和真实版本打开。">
+        <SectionCard title="无法加载策略配置">
+          <p>{error}</p>
+          <Button type="primary" onClick={() => navigate('/strategy-center/strategies')}>
+            返回策略列表
+          </Button>
+        </SectionCard>
+      </PageContainer>
+    );
+  }
+
   if (!version) {
-    return <PageContainer title="策略配置">加载中...</PageContainer>;
+    return <PageContainer title="策略配置">正在加载真实策略版本配置...</PageContainer>;
   }
 
   const editable = version.status === 'DRAFT';
