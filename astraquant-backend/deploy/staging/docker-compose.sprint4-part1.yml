@@ -1,0 +1,161 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: astraquant-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-astra}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_DB: ${POSTGRES_DB:-astraquant}
+    volumes:
+      - sprint1_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-astra} -d ${POSTGRES_DB:-astraquant}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7
+    container_name: astraquant-redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  nats:
+    image: nats:latest
+    container_name: astraquant-nats
+    restart: unless-stopped
+    command: ["-js"]
+
+  auth-service:
+    build:
+      context: ../..
+      dockerfile: services/auth-service/Dockerfile
+    container_name: astraquant-auth-service
+    restart: unless-stopped
+    environment:
+      SERVICE_NAME: auth-service
+      ENV: staging
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-astra}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-astraquant}
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  strategy-service:
+    build:
+      context: ../..
+      dockerfile: services/strategy-service/Dockerfile
+    container_name: astraquant-strategy-service
+    restart: unless-stopped
+    environment:
+      SERVICE_NAME: strategy-service
+      ENV: staging
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-astra}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-astraquant}
+      REDIS_URL: redis://redis:6379/0
+      NATS_URL: nats://nats:4222
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nats:
+        condition: service_started
+
+  exchange-access-gateway:
+    build:
+      context: ../..
+      dockerfile: services/exchange-access-gateway/Dockerfile
+    container_name: astraquant-exchange-access-gateway
+    restart: unless-stopped
+    environment:
+      SERVICE_NAME: exchange-access-gateway
+      ENV: staging
+      HTTP_PORT: 8010
+      POSTGRES_DSN: postgres://${POSTGRES_USER:-astra}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-astraquant}?sslmode=disable
+      REDIS_ADDR: redis:6379
+      NATS_URL: nats://nats:4222
+      OKX_REST_BASE_URL: ${OKX_REST_BASE_URL:-https://www.okx.com}
+      OKX_TIMEOUT_MS: ${OKX_TIMEOUT_MS:-5000}
+      OKX_ENABLE_DEMO: "false"
+      RATE_LIMIT_ENABLED: "true"
+      AUDIT_ENABLED: "true"
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+
+  market-data-service:
+    build:
+      context: ../..
+      dockerfile: services/market-data-service/Dockerfile
+    container_name: astraquant-market-data-service
+    restart: unless-stopped
+    environment:
+      SERVICE_NAME: market-data-service
+      ENV: staging
+      HTTP_PORT: 8004
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-astra}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-astraquant}
+      REDIS_URL: redis://redis:6379/0
+      EXCHANGE_GATEWAY_URL: http://exchange-access-gateway:8010
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    ports:
+      - "${MARKET_DATA_SERVICE_PORT:-8004}:8004"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      exchange-access-gateway:
+        condition: service_started
+
+  api-gateway:
+    build:
+      context: ../..
+      dockerfile: services/api-gateway/Dockerfile
+    container_name: astraquant-api-gateway
+    restart: unless-stopped
+    environment:
+      SERVICE_NAME: api-gateway
+      ENV: staging
+      AUTH_SERVICE_URL: http://auth-service:8001
+      STRATEGY_SERVICE_URL: http://strategy-service:8002
+      EXCHANGE_ACCESS_GATEWAY_URL: http://exchange-access-gateway:8010
+      MARKET_DATA_SERVICE_URL: http://market-data-service:8004
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      REDIS_URL: redis://redis:6379/0
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    depends_on:
+      - auth-service
+      - strategy-service
+      - exchange-access-gateway
+      - market-data-service
+
+  frontend-web:
+    build:
+      context: ../../..
+      dockerfile: frontend/Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-}
+    container_name: astraquant-frontend-web
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-80}:80"
+    depends_on:
+      - api-gateway
+
+volumes:
+  sprint1_postgres_data:

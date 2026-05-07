@@ -4,6 +4,11 @@ from app.middleware.permissions import require_permission
 
 router = APIRouter(tags=["market-data"])
 
+@router.get("/api/market-data/health")
+async def health(request: Request):
+    require_permission(request, "market_data:read")
+    return await MarketDataClient().request("GET", "/health", request)
+
 @router.post("/api/market-data/sync")
 async def create_sync(payload: dict, request: Request):
     require_permission(request, "market_data:sync")
@@ -13,6 +18,16 @@ async def create_sync(payload: dict, request: Request):
 async def get_sync(sync_task_id: str, request: Request):
     require_permission(request, "market_data:read")
     return await MarketDataClient().request("GET", f"/market-data/sync/{sync_task_id}", request)
+
+@router.get("/api/market-data/sync")
+async def list_sync(request: Request):
+    require_permission(request, "market_data:read")
+    return await MarketDataClient().request("GET", "/market-data/sync", request, params=dict(request.query_params))
+
+@router.post("/api/market-data/sync/{sync_task_id}/run")
+async def run_sync(sync_task_id: str, request: Request):
+    require_permission(request, "market_data:sync")
+    return await MarketDataClient().request("POST", f"/market-data/sync/{sync_task_id}/run", request)
 
 @router.get("/api/market-data/instruments")
 async def instruments(request: Request):
