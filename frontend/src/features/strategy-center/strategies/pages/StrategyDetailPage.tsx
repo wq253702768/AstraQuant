@@ -5,6 +5,7 @@ import { SettingOutlined } from '@ant-design/icons';
 import { MetricCard } from '@/components/data-display/MetricCard';
 import { SectionCard } from '@/components/data-display/SectionCard';
 import { PageContainer } from '@/layouts/PageContainer/PageContainer';
+import { routePaths } from '@/app/router/routePaths';
 import { strategyApi } from '@/services/strategy.api';
 import type { StrategyDetail, UpdateStrategyPayload } from '@/types/strategy';
 import styles from './StrategyDetailPage.module.css';
