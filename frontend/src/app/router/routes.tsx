@@ -2,6 +2,7 @@ import { Navigate, createBrowserRouter } from 'react-router-dom';
 import { BasicLayout } from '@/layouts/BasicLayout/BasicLayout';
 import { LoginPage } from '@/features/auth/pages/LoginPage';
 import { DashboardPage } from '@/features/dashboard/pages/DashboardPage';
+import { MarketDataPage } from '@/features/market-data/pages/MarketDataPage';
 import { StrategyListPage } from '@/features/strategy-center/strategies/pages/StrategyListPage';
 import { StrategyTemplateListPage } from '@/features/strategy-center/templates/pages/StrategyTemplateListPage';
 import { StrategyTemplateDetailPage } from '@/features/strategy-center/templates/pages/StrategyTemplateDetailPage';
@@ -42,6 +43,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="/dashboard" replace /> },
       { path: 'dashboard', element: <DashboardPage /> },
+      { path: 'market-data', element: <MarketDataPage /> },
       { path: 'strategy-center', element: <Navigate to="/strategy-center/strategies" replace /> },
       { path: 'strategy-center/strategies', element: <StrategyListPage /> },
       { path: 'strategy-center/templates', element: <StrategyTemplateListPage /> },

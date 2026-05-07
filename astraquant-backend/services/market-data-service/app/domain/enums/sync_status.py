@@ -3,8 +3,10 @@ from enum import StrEnum
 class SyncStatus(StrEnum):
     CREATED = "CREATED"
     QUEUED = "QUEUED"
+    PENDING = "PENDING"
     RUNNING = "RUNNING"
     VALIDATING = "VALIDATING"
+    SUCCESS = "SUCCESS"
     COMPLETED = "COMPLETED"
     FAILED = "FAILED"
     CANCELED = "CANCELED"

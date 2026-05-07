@@ -20,3 +20,5 @@ class SyncTaskStatusResponse(BaseModel):
     progress: float
     current_stage: str | None = None
     error_message: str | None = None
+    inserted_count: int | None = None
+    updated_count: int | None = None

@@ -18,6 +18,7 @@ export const routePaths = {
   scoring: '/strategy-center/backtests/demo-task/score',
   report: '/strategy-center/backtests/demo-task/report',
   paperValidation: '/strategy-center/paper-validation',
+  marketData: '/market-data',
   settings: '/system-settings',
   exchangeSettings: '/system-settings/exchange',
   aiModelSettings: '/system-settings/ai-models',

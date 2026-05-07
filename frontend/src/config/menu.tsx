@@ -63,6 +63,11 @@ export const appMenuItems: AppMenuItem[] = [
     ],
   },
   {
+    key: routePaths.marketData,
+    icon: <DatabaseOutlined />,
+    label: '历史行情',
+  },
+  {
     key: 'system-settings',
     icon: <SettingOutlined />,
     label: '系统设置',

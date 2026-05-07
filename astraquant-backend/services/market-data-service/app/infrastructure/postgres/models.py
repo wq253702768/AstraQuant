@@ -1,6 +1,6 @@
 from datetime import datetime
 from uuid import uuid4
-from sqlalchemy import Boolean, DateTime, Numeric, String, Text, func
+from sqlalchemy import Boolean, DateTime, Numeric, String, Text, UniqueConstraint, func
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 from app.infrastructure.postgres.base import Base
@@ -21,6 +21,29 @@ class MarketDataSyncTaskModel(Base):
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_by: Mapped[str | None] = mapped_column(UUID(as_uuid=False), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+class MarketCandleModel(Base):
+    __tablename__ = "market_candle"
+    __table_args__ = (UniqueConstraint("exchange", "internal_symbol", "timeframe", "open_time", name="uk_market_candle"),)
+    id: Mapped[str] = mapped_column(UUID(as_uuid=False), primary_key=True, default=lambda: str(uuid4()))
+    exchange: Mapped[str] = mapped_column(String(32), index=True)
+    internal_symbol: Mapped[str] = mapped_column(String(64), index=True)
+    timeframe: Mapped[str] = mapped_column(String(16), index=True)
+    open_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
+    close_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
+    open: Mapped[float] = mapped_column(Numeric(32, 16))
+    high: Mapped[float] = mapped_column(Numeric(32, 16))
+    low: Mapped[float] = mapped_column(Numeric(32, 16))
+    close: Mapped[float] = mapped_column(Numeric(32, 16))
+    volume: Mapped[float | None] = mapped_column(Numeric(32, 16), nullable=True)
+    volume_ccy: Mapped[float | None] = mapped_column(Numeric(32, 16), nullable=True)
+    volume_ccy_quote: Mapped[float | None] = mapped_column(Numeric(32, 16), nullable=True)
+    confirm: Mapped[bool] = mapped_column(Boolean, default=True, index=True)
+    source: Mapped[str] = mapped_column(String(64))
+    sync_job_id: Mapped[str | None] = mapped_column(UUID(as_uuid=False), nullable=True)
+    raw_json: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
 class InstrumentConfigModel(Base):

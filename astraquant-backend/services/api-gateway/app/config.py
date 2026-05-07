@@ -8,7 +8,7 @@ class Settings:
     auth_service_url: str = os.getenv("AUTH_SERVICE_URL", "http://localhost:8001")
     strategy_service_url: str = os.getenv("STRATEGY_SERVICE_URL", "http://localhost:8002")
     exchange_access_gateway_url: str = os.getenv("EXCHANGE_ACCESS_GATEWAY_URL", "http://localhost:8010")
-    market_data_service_url: str = os.getenv("MARKET_DATA_SERVICE_URL", "http://localhost:8003")
+    market_data_service_url: str = os.getenv("MARKET_DATA_SERVICE_URL", "http://localhost:8004")
     backtest_service_url: str = os.getenv("BACKTEST_SERVICE_URL", "http://localhost:8004")
     replay_service_url: str = os.getenv("REPLAY_SERVICE_URL", "http://localhost:8005")
     ai_analysis_service_url: str = os.getenv("AI_ANALYSIS_SERVICE_URL", "http://localhost:8006")
