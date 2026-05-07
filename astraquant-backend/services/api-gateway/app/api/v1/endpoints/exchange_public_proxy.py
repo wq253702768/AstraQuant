@@ -60,6 +60,12 @@ async def mark_price(exchange: str, request: Request):
     return await ExchangePublicClient().request("GET", f"/api/v1/exchanges/{exchange}/mark-price", request, params=dict(request.query_params))
 
 
+@router.get("/api/exchange-public/exchanges/{exchange}/open-interest")
+async def open_interest(exchange: str, request: Request):
+    require_permission(request, "market_data:read")
+    return await ExchangePublicClient().request("GET", f"/api/v1/exchanges/{exchange}/open-interest", request, params=dict(request.query_params))
+
+
 @router.get("/api/exchange-public/exchanges/{exchange}/funding-rate")
 async def funding_rate(exchange: str, request: Request):
     require_permission(request, "market_data:read")

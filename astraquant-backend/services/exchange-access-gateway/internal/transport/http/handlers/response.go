@@ -20,8 +20,8 @@ func Error(c *gin.Context, err error) {
 		if status == 0 {
 			status = http.StatusBadGateway
 		}
-		c.JSON(status, gin.H{"code": string(exchangeErr.Code), "message": exchangeErr.Message, "trace_id": middleware.TraceID(c), "data": nil})
+		c.JSON(status, gin.H{"code": domainerrors.PublicCode(exchangeErr.Code), "message": domainerrors.PublicMessage(exchangeErr.Code, exchangeErr.Message), "trace_id": middleware.TraceID(c), "data": nil})
 		return
 	}
-	c.JSON(http.StatusInternalServerError, gin.H{"code": "UNKNOWN_ERROR", "message": err.Error(), "trace_id": middleware.TraceID(c), "data": nil})
+	c.JSON(http.StatusInternalServerError, gin.H{"code": "EXCHANGE_REQUEST_FAILED", "message": err.Error(), "trace_id": middleware.TraceID(c), "data": nil})
 }

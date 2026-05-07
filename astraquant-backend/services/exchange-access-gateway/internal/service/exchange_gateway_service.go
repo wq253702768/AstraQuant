@@ -83,7 +83,7 @@ func (s *ExchangeGatewayService) GetKlines(ctx context.Context, exchange string,
 		return nil, domainerrors.New(domainerrors.SymbolNotSupported, "symbol not supported", http.StatusBadRequest)
 	}
 	if !supportedTimeframe(req.Timeframe) {
-		return nil, domainerrors.New(domainerrors.BadResponse, "timeframe not supported", http.StatusBadRequest)
+		return nil, domainerrors.New(domainerrors.TimeframeNotSupported, "timeframe not supported", http.StatusBadRequest)
 	}
 	if req.Limit > 300 {
 		return nil, domainerrors.New(domainerrors.RateLimited, "limit exceeds maximum 300", http.StatusBadRequest)
@@ -146,6 +146,19 @@ func (s *ExchangeGatewayService) GetMarkPrice(ctx context.Context, exchange stri
 	var result *models.UnifiedMarkPrice
 	err := s.call(ctx, exchange, "mark-price", "P4", traceID, func(adapter ExchangeAdapter) error {
 		value, err := adapter.GetMarkPrice(ctx, req)
+		result = value
+		return err
+	})
+	return result, err
+}
+
+func (s *ExchangeGatewayService) GetOpenInterest(ctx context.Context, exchange string, req models.GetOpenInterestRequest, traceID string) (*models.UnifiedOpenInterest, error) {
+	if !IsSupportedSymbol(req.Symbol) {
+		return nil, domainerrors.New(domainerrors.SymbolNotSupported, "symbol not supported", http.StatusBadRequest)
+	}
+	var result *models.UnifiedOpenInterest
+	err := s.call(ctx, exchange, "open-interest", "P4", traceID, func(adapter ExchangeAdapter) error {
+		value, err := adapter.GetOpenInterest(ctx, req)
 		result = value
 		return err
 	})

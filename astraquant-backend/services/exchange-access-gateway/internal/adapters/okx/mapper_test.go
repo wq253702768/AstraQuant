@@ -36,3 +36,10 @@ func TestOKXMarkPriceMapper(t *testing.T) {
 		t.Fatalf("bad mark mapping: %+v", item)
 	}
 }
+
+func TestOKXOpenInterestMapper(t *testing.T) {
+	item := MapOpenInterest(map[string]any{"instId": "BTC-USDT-SWAP", "oi": "123456", "oiCcy": "1234.56", "ts": "1760000000000"})
+	if item.OpenInterest != "123456" || item.OpenInterestCcy != "1234.56" || item.ExchangeTime != 1760000000000 {
+		t.Fatalf("bad open interest mapping: %+v", item)
+	}
+}

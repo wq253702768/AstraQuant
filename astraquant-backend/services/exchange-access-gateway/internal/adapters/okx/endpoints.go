@@ -8,4 +8,5 @@ const (
 	EndpointFundingRate        = "/api/v5/public/funding-rate"
 	EndpointFundingRateHistory = "/api/v5/public/funding-rate-history"
 	EndpointMarkPrice          = "/api/v5/public/mark-price"
+	EndpointOpenInterest       = "/api/v5/public/open-interest"
 )

@@ -41,3 +41,13 @@ export interface FundingRate {
   next_funding_time: number;
   mark_price?: string;
 }
+
+export interface OpenInterest {
+  exchange: string;
+  internal_symbol: string;
+  exchange_symbol: string;
+  open_interest: string;
+  open_interest_ccy: string;
+  exchange_time: number;
+  received_at: number;
+}

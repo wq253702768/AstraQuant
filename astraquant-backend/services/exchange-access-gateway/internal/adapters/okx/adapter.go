@@ -163,6 +163,22 @@ func (a *Adapter) GetMarkPrice(ctx context.Context, req models.GetMarkPriceReque
 	return &item, nil
 }
 
+func (a *Adapter) GetOpenInterest(ctx context.Context, req models.GetOpenInterestRequest) (*models.UnifiedOpenInterest, error) {
+	payload, _, err := a.client.Get(ctx, EndpointOpenInterest, map[string]string{"instType": "SWAP", "instId": ToOKXSymbol(req.Symbol)})
+	if err != nil {
+		return nil, err
+	}
+	rows, err := payload.DataObjects()
+	if err != nil {
+		return nil, err
+	}
+	if len(rows) == 0 {
+		return nil, domainerrors.New(domainerrors.BadResponse, "empty open interest response", 502)
+	}
+	item := MapOpenInterest(rows[0])
+	return &item, nil
+}
+
 func (a *Adapter) PlaceOrder(ctx context.Context, req models.PlaceOrderRequest) (*models.UnifiedOrder, error) {
 	return nil, domainerrors.ErrNotImplemented
 }

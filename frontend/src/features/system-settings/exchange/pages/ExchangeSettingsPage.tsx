@@ -6,7 +6,7 @@ import { MetricCard } from '@/components/data-display/MetricCard';
 import { SectionCard } from '@/components/data-display/SectionCard';
 import { PageContainer } from '@/layouts/PageContainer/PageContainer';
 import { exchangeApi } from '@/services/exchange.api';
-import type { ExchangeInstrument, ExchangeTicker, FundingRate, MarkPrice } from '@/types/exchange';
+import type { ExchangeInstrument, ExchangeTicker, FundingRate, MarkPrice, OpenInterest } from '@/types/exchange';
 
 const symbols = ['BTC-USDT-SWAP', 'ETH-USDT-SWAP'];
 
@@ -19,6 +19,7 @@ export function ExchangeSettingsPage() {
   const [tickers, setTickers] = useState<Record<string, ExchangeTicker>>({});
   const [marks, setMarks] = useState<Record<string, MarkPrice>>({});
   const [funding, setFunding] = useState<Record<string, FundingRate>>({});
+  const [openInterest, setOpenInterest] = useState<Record<string, OpenInterest>>({});
   const [klines, setKlines] = useState<Array<Record<string, unknown>>>([]);
   const [fundingHistory, setFundingHistory] = useState<FundingRate[]>([]);
   const [selectedSymbol, setSelectedSymbol] = useState('BTC-USDT-SWAP');
@@ -43,9 +44,11 @@ export function ExchangeSettingsPage() {
       const tickerEntries = await Promise.all(symbols.map(async (symbol) => [symbol, await exchangeApi.ticker(symbol)] as const));
       const markEntries = await Promise.all(symbols.map(async (symbol) => [symbol, await exchangeApi.markPrice(symbol)] as const));
       const fundingEntries = await Promise.all(symbols.map(async (symbol) => [symbol, await exchangeApi.fundingRate(symbol)] as const));
+      const openInterestEntries = await Promise.all(symbols.map(async (symbol) => [symbol, await exchangeApi.openInterest(symbol)] as const));
       setTickers(Object.fromEntries(tickerEntries));
       setMarks(Object.fromEntries(markEntries));
       setFunding(Object.fromEntries(fundingEntries));
+      setOpenInterest(Object.fromEntries(openInterestEntries));
       await loadSeries(selectedSymbol, timeframe);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : '交易所公共数据加载失败';
@@ -117,6 +120,8 @@ export function ExchangeSettingsPage() {
               <Descriptions.Item label="卖一">{tickers[symbol]?.best_ask_price || '-'}</Descriptions.Item>
               <Descriptions.Item label="标记价">{marks[symbol]?.mark_price || '-'}</Descriptions.Item>
               <Descriptions.Item label="资金费率">{funding[symbol]?.funding_rate || '-'}</Descriptions.Item>
+                <Descriptions.Item label="持仓量">{openInterest[symbol]?.open_interest || '-'}</Descriptions.Item>
+                <Descriptions.Item label="持仓币量">{openInterest[symbol]?.open_interest_ccy || '-'}</Descriptions.Item>
             </Descriptions>
           ))}
         </Space>

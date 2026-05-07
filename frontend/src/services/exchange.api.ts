@@ -1,5 +1,5 @@
 import { request } from './request';
-import type { ExchangeInstrument, ExchangeTicker, FundingRate, MarkPrice } from '@/types/exchange';
+import type { ExchangeInstrument, ExchangeTicker, FundingRate, MarkPrice, OpenInterest } from '@/types/exchange';
 
 const exchange = 'OKX';
 
@@ -39,6 +39,9 @@ export const exchangeApi = {
   },
   fundingRate(symbol: string) {
     return request.get<unknown, FundingRate>(`/api/exchange-public/exchanges/${exchange}/funding-rate`, { params: { symbol } });
+  },
+  openInterest(symbol: string) {
+    return request.get<unknown, OpenInterest>(`/api/exchange-public/exchanges/${exchange}/open-interest`, { params: { symbol } });
   },
   klines(symbol: string, timeframe = '5m', limit = 5) {
     return request.get<unknown, { items: Array<Record<string, unknown>> }>(`/api/exchange-public/exchanges/${exchange}/klines`, {

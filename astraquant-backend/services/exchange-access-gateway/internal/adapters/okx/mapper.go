@@ -168,3 +168,16 @@ func MapMarkPrice(data map[string]any) models.UnifiedMarkPrice {
 		Timestamp:      int64FromString(str(data, "ts")),
 	}
 }
+
+func MapOpenInterest(data map[string]any) models.UnifiedOpenInterest {
+	exchangeSymbol := str(data, "instId")
+	return models.UnifiedOpenInterest{
+		Exchange:        string(models.ExchangeOKX),
+		InternalSymbol:  FromOKXSymbol(exchangeSymbol),
+		ExchangeSymbol:  exchangeSymbol,
+		OpenInterest:    str(data, "oi"),
+		OpenInterestCcy: str(data, "oiCcy"),
+		ExchangeTime:    int64FromString(str(data, "ts")),
+		ReceivedAt:      time.Now().UnixMilli(),
+	}
+}
