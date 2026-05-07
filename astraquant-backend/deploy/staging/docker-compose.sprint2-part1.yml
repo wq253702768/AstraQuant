@@ -29,8 +29,8 @@ services:
 
   auth-service:
     build:
-      context: ../../..
-      dockerfile: astraquant-backend/services/auth-service/Dockerfile
+      context: ../..
+      dockerfile: services/auth-service/Dockerfile
     container_name: astraquant-auth-service
     restart: unless-stopped
     environment:
@@ -50,8 +50,8 @@ services:
 
   strategy-service:
     build:
-      context: ../../..
-      dockerfile: astraquant-backend/services/strategy-service/Dockerfile
+      context: ../..
+      dockerfile: services/strategy-service/Dockerfile
     container_name: astraquant-strategy-service
     restart: unless-stopped
     environment:
@@ -71,8 +71,8 @@ services:
 
   api-gateway:
     build:
-      context: ../../..
-      dockerfile: astraquant-backend/services/api-gateway/Dockerfile
+      context: ../..
+      dockerfile: services/api-gateway/Dockerfile
     container_name: astraquant-api-gateway
     restart: unless-stopped
     environment:
