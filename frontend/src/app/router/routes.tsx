@@ -3,6 +3,8 @@ import { BasicLayout } from '@/layouts/BasicLayout/BasicLayout';
 import { LoginPage } from '@/features/auth/pages/LoginPage';
 import { DashboardPage } from '@/features/dashboard/pages/DashboardPage';
 import { StrategyListPage } from '@/features/strategy-center/strategies/pages/StrategyListPage';
+import { StrategyTemplateListPage } from '@/features/strategy-center/templates/pages/StrategyTemplateListPage';
+import { StrategyTemplateDetailPage } from '@/features/strategy-center/templates/pages/StrategyTemplateDetailPage';
 import { StrategyDetailPage } from '@/features/strategy-center/strategies/pages/StrategyDetailPage';
 import { StrategyConfigPage } from '@/features/strategy-center/config/pages/StrategyConfigPage';
 import { StrategyVersionsPage } from '@/features/strategy-center/versions/pages/StrategyVersionsPage';
@@ -42,6 +44,8 @@ export const router = createBrowserRouter([
       { path: 'dashboard', element: <DashboardPage /> },
       { path: 'strategy-center', element: <Navigate to="/strategy-center/strategies" replace /> },
       { path: 'strategy-center/strategies', element: <StrategyListPage /> },
+      { path: 'strategy-center/templates', element: <StrategyTemplateListPage /> },
+      { path: 'strategy-center/templates/:templateId', element: <StrategyTemplateDetailPage /> },
       { path: 'strategy-center/strategies/:strategyId', element: <StrategyDetailPage /> },
       { path: 'strategy-center/strategies/:strategyId/config', element: <StrategyConfigPage /> },
       { path: 'strategy-center/strategies/:strategyId/versions', element: <StrategyVersionsPage /> },

@@ -28,6 +28,8 @@ export const routePaths = {
   notifications: '/system-settings/notifications',
   strategyCenter: {
     strategies: '/strategy-center/strategies',
+    templates: '/strategy-center/templates',
+    templateDetail: '/strategy-center/templates/:templateId',
     strategyDetail: '/strategy-center/strategies/:strategyId',
     strategyConfig: '/strategy-center/strategies/:strategyId/config',
     strategyVersions: '/strategy-center/strategies/:strategyId/versions',

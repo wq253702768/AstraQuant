@@ -5,6 +5,9 @@ export interface StrategyTemplate {
   strategy_type: string;
   description?: string | null;
   default_config?: Record<string, unknown> | null;
+  default_params?: Record<string, unknown> | null;
+  param_schema?: Record<string, unknown> | null;
+  risk_schema?: Record<string, unknown> | null;
 }
 
 export interface StrategyTemplateResponse {

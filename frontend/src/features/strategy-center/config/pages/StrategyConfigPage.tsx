@@ -65,19 +65,27 @@ export function StrategyConfigPage() {
     if (!version) return;
     const params = parseJson(values.params_json, '策略参数');
     const risk = parseJson(values.risk_params_json, '风控参数');
-    await strategyApi.updateVersionParams(version.id, {
-      params_json: params,
-      risk_params_json: risk,
+    Modal.confirm({
+      title: '确认保存策略版本配置？',
+      content: '这些参数将影响后续回测、模拟盘和实盘风控判断。',
+      okText: '确认保存',
+      cancelText: '取消',
+      onOk: async () => {
+        await strategyApi.updateVersionParams(version.id, {
+          params_json: params,
+          risk_params_json: risk,
+        });
+        message.success('策略版本配置已保存');
+        await load();
+      },
     });
-    message.success('策略版本配置已保存');
-    await load();
   };
 
   const handlePublish = async () => {
     if (!strategyId || !version) return;
     Modal.confirm({
       title: '确认发布策略版本？',
-      content: '发布后该策略版本将不可修改，后续回测、模拟盘和实盘都将引用该版本配置。',
+      content: '发布后该策略版本将不可修改。后续回测、模拟盘和实盘都将引用该版本配置。如需调整，必须复制为新草稿版本。',
       okText: '确认发布',
       cancelText: '取消',
       onOk: async () => {
@@ -90,9 +98,17 @@ export function StrategyConfigPage() {
 
   const handleCopyDraft = async () => {
     if (!strategyId || !version) return;
-    const result = await strategyApi.copyVersion(strategyId, version.id, '基于已发布版本复制为新草稿');
-    message.success('已复制为新草稿');
-    navigate(`/strategy-center/strategies/${strategyId}/versions/${result.strategy_version_id}/config`);
+    Modal.confirm({
+      title: '确认复制该已发布版本为新草稿？',
+      content: '新草稿可继续编辑，原发布版本保持不变。',
+      okText: '确认复制',
+      cancelText: '取消',
+      onOk: async () => {
+        const result = await strategyApi.copyVersion(strategyId, version.id, '基于已发布版本复制为新草稿');
+        message.success('已复制为新草稿');
+        navigate(`/strategy-center/strategies/${strategyId}/versions/${result.strategy_version_id}/config`);
+      },
+    });
   };
 
   if (error) {

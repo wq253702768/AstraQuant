@@ -6,6 +6,7 @@ import type {
   PublishStrategyVersionResponse,
   StrategyDetail,
   StrategyListResponse,
+  StrategyTemplate,
   StrategyTemplateResponse,
   StrategyVersionDetail,
   StrategyVersionListResponse,
@@ -16,6 +17,9 @@ import type {
 export const strategyApi = {
   templates() {
     return request.get<unknown, StrategyTemplateResponse>('/api/strategy-templates');
+  },
+  templateDetail(templateId: string) {
+    return request.get<unknown, StrategyTemplate>(`/api/strategy-templates/${templateId}`);
   },
   list(params?: Record<string, unknown>) {
     return request.get<unknown, StrategyListResponse>('/api/strategies', { params });
