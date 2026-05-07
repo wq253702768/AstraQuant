@@ -31,9 +31,15 @@ func NewRouter(cfg config.Config, gateway *service.ExchangeGatewayService, metri
 	funding := handlers.FundingHandler{Gateway: gateway}
 	mark := handlers.MarkPriceHandler{Gateway: gateway}
 	ticker := handlers.TickerHandler{Gateway: gateway}
+	metadata := handlers.MetadataHandler{Gateway: gateway}
 
 	engine.GET("/health", health.Health)
 	engine.GET("/metrics", gin.WrapH(promhttp.Handler()))
+	public := engine.Group("/exchange-public")
+	public.POST("/instruments/sync", metadata.SyncInstruments)
+	public.GET("/instruments", metadata.ListInstruments)
+	public.GET("/instruments/:symbol", metadata.GetInstrument)
+	public.GET("/symbol-mappings", metadata.SymbolMappings)
 
 	v1 := engine.Group("/api/v1/exchanges/:exchange")
 	v1.GET("/time", market.GetTime)

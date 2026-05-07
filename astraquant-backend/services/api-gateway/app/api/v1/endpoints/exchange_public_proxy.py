@@ -18,6 +18,30 @@ async def time(exchange: str, request: Request):
     return await ExchangePublicClient().request("GET", f"/api/v1/exchanges/{exchange}/time", request)
 
 
+@router.post("/api/exchange-public/instruments/sync")
+async def sync_instruments(payload: dict, request: Request):
+    require_permission(request, "market_data:read")
+    return await ExchangePublicClient().request("POST", "/exchange-public/instruments/sync", request, payload)
+
+
+@router.get("/api/exchange-public/instruments")
+async def stored_instruments(request: Request):
+    require_permission(request, "market_data:read")
+    return await ExchangePublicClient().request("GET", "/exchange-public/instruments", request, params=dict(request.query_params))
+
+
+@router.get("/api/exchange-public/instruments/{symbol}")
+async def stored_instrument(symbol: str, request: Request):
+    require_permission(request, "market_data:read")
+    return await ExchangePublicClient().request("GET", f"/exchange-public/instruments/{symbol}", request, params=dict(request.query_params))
+
+
+@router.get("/api/exchange-public/symbol-mappings")
+async def symbol_mappings(request: Request):
+    require_permission(request, "market_data:read")
+    return await ExchangePublicClient().request("GET", "/exchange-public/symbol-mappings", request, params=dict(request.query_params))
+
+
 @router.get("/api/exchange-public/exchanges/{exchange}/instruments")
 async def instruments(exchange: str, request: Request):
     require_permission(request, "market_data:read")
