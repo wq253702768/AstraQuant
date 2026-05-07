@@ -36,6 +36,8 @@ export interface FundingRate {
   exchange: string;
   internal_symbol: string;
   funding_rate: string;
+  realized_rate?: string;
+  funding_time: number;
   next_funding_time: number;
   mark_price?: string;
 }
