@@ -43,9 +43,12 @@ class CreateStrategyVersionService:
         else:
             if source.strategy_id != strategy_id:
                 raise AppError("STRATEGY_VERSION_NOT_FOUND", "来源策略版本不存在", 404)
+            template = await self.template_repo.get(source.template_id)
+            if template is None:
+                raise AppError("STRATEGY_TEMPLATE_NOT_FOUND", "策略模板不存在或未启用", 404)
             params = payload.params_json or source.params_json
             risk = payload.risk_params_json or source.risk_params_json
-            self.validator.validate(params, risk, source.template.param_schema, source.template.risk_schema)
+            self.validator.validate(params, risk, template.param_schema, template.risk_schema)
             template_id = source.template_id
             source_version_id = source.id
         versions = await self.version_repo.version_strings(strategy_id)

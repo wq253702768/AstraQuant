@@ -7,6 +7,7 @@ from app.infrastructure.db.models import StrategyStatusLogModel
 from app.infrastructure.nats import topics
 from app.infrastructure.nats.publisher import EventPublisher
 from app.infrastructure.repositories.strategy_repository import StrategyRepository
+from app.infrastructure.repositories.strategy_template_repository import StrategyTemplateRepository
 from app.infrastructure.repositories.strategy_status_log_repository import StrategyStatusLogRepository
 from app.infrastructure.repositories.strategy_version_repository import StrategyVersionRepository
 from app.schemas.strategy_version import UpdateStrategyParamsRequest, UpdateStrategyParamsResponse
@@ -15,6 +16,7 @@ from app.utils.hash_utils import calc_params_hash
 class UpdateStrategyParamsService:
     def __init__(self, session):
         self.strategy_repo = StrategyRepository(session)
+        self.template_repo = StrategyTemplateRepository(session)
         self.version_repo = StrategyVersionRepository(session)
         self.log_repo = StrategyStatusLogRepository(session)
         self.validator = StrategyParamValidator()
@@ -30,7 +32,10 @@ class UpdateStrategyParamsService:
         strategy = await self.strategy_repo.get(version.strategy_id)
         if strategy is None:
             raise AppError("STRATEGY_NOT_FOUND", "策略不存在", 404)
-        self.validator.validate(payload.params_json, payload.risk_params_json, version.template.param_schema, version.template.risk_schema)
+        template = await self.template_repo.get(version.template_id)
+        if template is None:
+            raise AppError("STRATEGY_TEMPLATE_NOT_FOUND", "策略模板不存在或未启用", 404)
+        self.validator.validate(payload.params_json, payload.risk_params_json, template.param_schema, template.risk_schema)
         version.params_json = payload.params_json
         version.risk_params_json = payload.risk_params_json
         version.params_hash = calc_params_hash(payload.params_json, payload.risk_params_json)
