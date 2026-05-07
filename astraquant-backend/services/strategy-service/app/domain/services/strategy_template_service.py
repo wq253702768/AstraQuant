@@ -96,6 +96,9 @@ def template_seed_rows() -> list[dict]:
     for template in strategy_templates():
         row = deepcopy(template)
         row["risk_schema"] = deepcopy(RISK_SCHEMA)
+        row["template_type"] = "CONFIG"
+        row["default_config"] = deepcopy(template["default_params"])
+        row["sort_order"] = len(rows)
         row["enabled"] = True
         rows.append(row)
     return rows
