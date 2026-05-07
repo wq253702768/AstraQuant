@@ -30,6 +30,7 @@ func NewRouter(cfg config.Config, gateway *service.ExchangeGatewayService, metri
 	instruments := handlers.InstrumentsHandler{Gateway: gateway}
 	funding := handlers.FundingHandler{Gateway: gateway}
 	mark := handlers.MarkPriceHandler{Gateway: gateway}
+	ticker := handlers.TickerHandler{Gateway: gateway}
 
 	engine.GET("/health", health.Health)
 	engine.GET("/metrics", gin.WrapH(promhttp.Handler()))
@@ -37,6 +38,7 @@ func NewRouter(cfg config.Config, gateway *service.ExchangeGatewayService, metri
 	v1 := engine.Group("/api/v1/exchanges/:exchange")
 	v1.GET("/time", market.GetTime)
 	v1.GET("/instruments", instruments.GetInstruments)
+	v1.GET("/ticker", ticker.GetTicker)
 	v1.GET("/klines", market.GetKlines)
 	v1.GET("/funding-rate", funding.GetFundingRate)
 	v1.GET("/funding-rate-history", funding.GetFundingRateHistory)

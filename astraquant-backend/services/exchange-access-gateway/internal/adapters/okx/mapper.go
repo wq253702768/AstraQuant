@@ -3,6 +3,7 @@ package okx
 import (
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/astraquant/exchange-access-gateway/internal/domain/models"
 )
@@ -96,6 +97,27 @@ func MapInstrument(data map[string]any) models.UnifiedInstrument {
 		PricePrecision: precisionFromStep(tickSize),
 		SizePrecision:  precisionFromStep(lotSize),
 		Status:         statusFromOKX(str(data, "state")),
+	}
+}
+
+func MapTicker(data map[string]any) models.UnifiedTicker {
+	exchangeSymbol := str(data, "instId")
+	return models.UnifiedTicker{
+		Exchange:       string(models.ExchangeOKX),
+		InternalSymbol: FromOKXSymbol(exchangeSymbol),
+		ExchangeSymbol: exchangeSymbol,
+		LastPrice:      str(data, "last"),
+		BestBidPrice:   str(data, "bidPx"),
+		BestAskPrice:   str(data, "askPx"),
+		BestBidSize:    str(data, "bidSz"),
+		BestAskSize:    str(data, "askSz"),
+		Open24h:        str(data, "open24h"),
+		High24h:        str(data, "high24h"),
+		Low24h:         str(data, "low24h"),
+		Volume24h:      str(data, "vol24h"),
+		VolumeCcy24h:   str(data, "volCcy24h"),
+		ExchangeTime:   int64FromString(str(data, "ts")),
+		ReceivedAt:     time.Now().UnixMilli(),
 	}
 }
 

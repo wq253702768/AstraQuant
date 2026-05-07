@@ -9,6 +9,7 @@ import (
 type ExchangeAdapter interface {
 	GetExchangeName() string
 	GetInstruments(ctx context.Context, req models.GetInstrumentsRequest) ([]models.UnifiedInstrument, error)
+	GetTicker(ctx context.Context, req models.GetTickerRequest) (*models.UnifiedTicker, error)
 	GetKlines(ctx context.Context, req models.GetKlinesRequest) ([]models.UnifiedKline, error)
 	GetFundingRate(ctx context.Context, req models.GetFundingRateRequest) (*models.UnifiedFundingRate, error)
 	GetFundingRateHistory(ctx context.Context, req models.GetFundingRateHistoryRequest) ([]models.UnifiedFundingRate, error)

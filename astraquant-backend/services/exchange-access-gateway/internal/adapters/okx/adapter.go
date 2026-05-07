@@ -89,6 +89,22 @@ func (a *Adapter) GetKlines(ctx context.Context, req models.GetKlinesRequest) ([
 	return items, nil
 }
 
+func (a *Adapter) GetTicker(ctx context.Context, req models.GetTickerRequest) (*models.UnifiedTicker, error) {
+	payload, _, err := a.client.Get(ctx, EndpointTicker, map[string]string{"instId": ToOKXSymbol(req.Symbol)})
+	if err != nil {
+		return nil, err
+	}
+	rows, err := payload.DataObjects()
+	if err != nil {
+		return nil, err
+	}
+	if len(rows) == 0 {
+		return nil, domainerrors.New(domainerrors.BadResponse, "empty ticker response", 502)
+	}
+	item := MapTicker(rows[0])
+	return &item, nil
+}
+
 func (a *Adapter) GetFundingRate(ctx context.Context, req models.GetFundingRateRequest) (*models.UnifiedFundingRate, error) {
 	payload, _, err := a.client.Get(ctx, EndpointFundingRate, map[string]string{"instId": ToOKXSymbol(req.Symbol)})
 	if err != nil {

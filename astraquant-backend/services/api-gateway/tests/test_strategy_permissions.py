@@ -35,6 +35,17 @@ def test_market_data_permission_allows():
     require_permission(request, "market_data:read")
 
 
+def test_exchange_public_requires_market_data_read():
+    request = FakeRequest()
+    request.state.user = {"permissions": ["strategy:read"]}
+    try:
+        require_permission(request, "market_data:read")
+    except AppError as exc:
+        assert exc.code == "FORBIDDEN"
+    else:
+        raise AssertionError("exchange public should require market_data:read")
+
+
 def test_strategy_update_permission_allows_archive_and_update():
     request = FakeRequest()
     request.state.user = {"permissions": ["strategy:update"]}

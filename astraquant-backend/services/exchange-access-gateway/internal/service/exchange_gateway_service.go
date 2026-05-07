@@ -65,6 +65,16 @@ func (s *ExchangeGatewayService) GetKlines(ctx context.Context, exchange string,
 	return result, err
 }
 
+func (s *ExchangeGatewayService) GetTicker(ctx context.Context, exchange string, req models.GetTickerRequest, traceID string) (*models.UnifiedTicker, error) {
+	var result *models.UnifiedTicker
+	err := s.call(ctx, exchange, "ticker", "P4", traceID, func(adapter ExchangeAdapter) error {
+		value, err := adapter.GetTicker(ctx, req)
+		result = value
+		return err
+	})
+	return result, err
+}
+
 func (s *ExchangeGatewayService) GetFundingRate(ctx context.Context, exchange string, req models.GetFundingRateRequest, traceID string) (*models.UnifiedFundingRate, error) {
 	var result *models.UnifiedFundingRate
 	err := s.call(ctx, exchange, "funding-rate", "P4", traceID, func(adapter ExchangeAdapter) error {
